@@ -18,6 +18,15 @@ const FileAnalysisPage = () => {
     setError(null);
   };
 
+  const handleClear = () => {
+    setFile(null);
+    setResults(null);
+    setError(null);
+    // Reset file input
+    const fileInput = document.getElementById('file-input');
+    if (fileInput) fileInput.value = '';
+  };
+
   const handleFileAnalysis = async () => {
     if (!file) {
       setError('Please select a file');
