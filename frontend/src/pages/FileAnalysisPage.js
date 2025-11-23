@@ -113,38 +113,6 @@ const FileAnalysisPage = () => {
     return indicators;
   };
 
-  const handleHashCheck = async () => {
-    if (!hashInput.trim()) {
-      setError('Please enter a file hash');
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-    setResults(null);
-
-    try {
-      const response = await axios.post(`${API}/file/check-hash`, {
-        hash: hashInput.trim(),
-        hash_type: hashType
-      });
-
-      if (response.data.success) {
-        setResults({
-          hash: hashInput.trim(),
-          hashType: hashType,
-          threatIntel: response.data.data
-        });
-      } else {
-        setError('Hash check failed');
-      }
-    } catch (err) {
-      setError(err.response?.data?.detail || err.message || 'Failed to check hash');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const formatFileSize = (bytes) => {
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(2)} KB`;
