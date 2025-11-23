@@ -49,6 +49,26 @@ const ResultsDisplay = ({ results }) => {
   };
 
   const SourceCard = ({ name, data, success, error }) => {
+    // Special handling for screenshot
+    if (name === 'Screenshot' && success && data?.screenshot) {
+      return (
+        <div className="bg-slate-950 rounded-lg p-4 border border-slate-800 col-span-2">
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="font-semibold text-white">Screenshot</h4>
+            <CheckCircle className="w-5 h-5 text-green-400" />
+          </div>
+          <div className="mt-3">
+            <img 
+              src={data.screenshot} 
+              alt="URL Screenshot" 
+              className="w-full rounded-lg border border-slate-700"
+            />
+            <p className="text-xs text-slate-400 mt-2">{data.message}</p>
+          </div>
+        </div>
+      );
+    }
+    
     return (
       <div className="bg-slate-950 rounded-lg p-4 border border-slate-800">
         <div className="flex items-center justify-between mb-3">
@@ -63,12 +83,30 @@ const ResultsDisplay = ({ results }) => {
         {success && data ? (
           <div className="space-y-2 text-sm">
             {Object.entries(data).map(([key, value]) => {
-              if (value === null || value === undefined) return null;
+              if (value === null || value === undefined || key === 'screenshot') return null;
+              
+              // Special formatting for GreyNoise classification
+              let displayValue = value;
+              if (name === 'Greynoise' && key === 'classification') {
+                const classColors = {
+                  'malicious': 'text-red-400',
+                  'benign': 'text-green-400',
+                  'unknown': 'text-slate-400'
+                };
+                return (
+                  <div key={key} className="flex justify-between">
+                    <span className="text-slate-400 capitalize">{key.replace(/_/g, ' ')}:</span>
+                    <span className={`font-medium ${classColors[value] || 'text-slate-200'}`}>
+                      {String(value).toUpperCase()}
+                    </span>
+                  </div>
+                );
+              }
               
               return (
                 <div key={key} className="flex justify-between">
                   <span className="text-slate-400 capitalize">{key.replace(/_/g, ' ')}:</span>
-                  <span className="text-slate-200 font-medium">
+                  <span className="text-slate-200 font-medium break-all">
                     {typeof value === 'object' ? JSON.stringify(value) : String(value)}
                   </span>
                 </div>
