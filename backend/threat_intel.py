@@ -354,12 +354,29 @@ class URLScanService(ThreatIntelService):
                 data = response.json()
                 results = data.get('results', [])
                 
+                # Extract detailed info from recent scans
+                recent_scan_details = []
+                for result in results[:5]:  # Get top 5 recent scans
+                    scan_info = {
+                        'url': result.get('page', {}).get('url', 'N/A'),
+                        'country': result.get('page', {}).get('country', 'Unknown'),
+                        'server': result.get('page', {}).get('server', 'Unknown'),
+                        'ip': result.get('page', {}).get('ip', 'Unknown'),
+                        'asn': result.get('page', {}).get('asn', 'Unknown'),
+                        'malicious': result.get('verdicts', {}).get('overall', {}).get('malicious', False),
+                        'score': result.get('verdicts', {}).get('overall', {}).get('score', 0),
+                        'categories': result.get('verdicts', {}).get('overall', {}).get('categories', []),
+                        'scan_time': result.get('task', {}).get('time', 'Unknown')
+                    }
+                    recent_scan_details.append(scan_info)
+                
                 return {
                     'success': True,
                     'data': {
                         'total_results': data.get('total', 0),
                         'has_results': len(results) > 0,
-                        'recent_scans': len(results)
+                        'recent_scans': len(results),
+                        'scan_details': recent_scan_details
                     }
                 }
             else:
