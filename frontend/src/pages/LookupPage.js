@@ -129,6 +129,7 @@ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`;
               <li>• GreyNoise - Classification</li>
               <li>• AlienVault OTX - Pulses</li>
               <li>• WHOIS - Registration</li>
+              <li>• MXToolbox - Blacklist</li>
             </ul>
           </div>
           <div className="bg-slate-950 p-4 rounded-lg">
@@ -138,6 +139,8 @@ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`;
               <li>• urlscan.io - Scanning</li>
               <li>• AlienVault OTX - Intel</li>
               <li>• WHOIS - Registration</li>
+              <li>• MXToolbox - MX/Blacklist</li>
+              <li>• URL Analysis - Redirects</li>
             </ul>
           </div>
           <div className="bg-slate-950 p-4 rounded-lg">
