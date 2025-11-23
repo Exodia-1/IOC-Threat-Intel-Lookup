@@ -16,36 +16,95 @@ const ResultsDisplay = ({ results }) => {
     return colors[type] || 'bg-slate-500/20 text-slate-400 border-slate-500/30';
   };
 
-  const getThreatLevel = (iocResult) => {
+  const getThreatAssessment = (iocResult) => {
     const sources = iocResult.sources || {};
-    
-    // Check VirusTotal
     const vt = sources.virustotal?.data;
-    if (vt && (vt.malicious > 5 || vt.suspicious > 3)) {
-      return { level: 'high', text: 'High Risk', color: 'text-red-400' };
-    }
-    
-    // Check AbuseIPDB
     const abuse = sources.abuseipdb?.data;
-    if (abuse && abuse.abuse_confidence_score > 75) {
-      return { level: 'high', text: 'High Risk', color: 'text-red-400' };
-    }
-    
-    // Check GreyNoise
     const greynoise = sources.greynoise?.data;
-    if (greynoise && greynoise.classification === 'malicious') {
-      return { level: 'high', text: 'High Risk', color: 'text-red-400' };
+    
+    let level = 'low';
+    let color = 'text-green-400';
+    let bgColor = 'bg-green-900/20';
+    let borderColor = 'border-green-500/30';
+    let icon = CheckCircle;
+    let text = 'Low Risk - Appears Safe';
+    let details = [];
+    let recommendations = [];
+    
+    // High Risk Detection
+    if (vt && vt.malicious > 5) {
+      level = 'high';
+      color = 'text-red-400';
+      bgColor = 'bg-red-900/20';
+      borderColor = 'border-red-500/50';
+      icon = AlertOctagon;
+      text = 'High Risk - Confirmed Malicious';
+      details.push(`${vt.malicious} security vendors flagged as malicious`);
+      recommendations.push('🚫 Block immediately in firewall/proxy');
+      recommendations.push('🔍 Investigate all systems that contacted this IOC');
+      recommendations.push('📝 Document in incident report');
+    } else if (abuse && abuse.abuse_confidence_score > 75) {
+      level = 'high';
+      color = 'text-red-400';
+      bgColor = 'bg-red-900/20';
+      borderColor = 'border-red-500/50';
+      icon = AlertOctagon;
+      text = 'High Risk - Abuse Confirmed';
+      details.push(`${abuse.abuse_confidence_score}% abuse confidence score`);
+      details.push(`${abuse.total_reports} abuse reports from ${abuse.num_distinct_users} users`);
+      recommendations.push('🚫 Block this IP in security controls');
+      recommendations.push('🔍 Check for lateral movement');
+    } else if (greynoise && greynoise.classification === 'malicious') {
+      level = 'high';
+      color = 'text-red-400';
+      bgColor = 'bg-red-900/20';
+      borderColor = 'border-red-500/50';
+      icon = AlertOctagon;
+      text = 'High Risk - Known Malicious Actor';
+      details.push('Classified as malicious by GreyNoise');
+      recommendations.push('🚫 Immediate blocking required');
+      recommendations.push('🔍 Review connection logs');
+    }
+    // Medium Risk Detection
+    else if (vt && (vt.malicious > 0 || vt.suspicious > 2)) {
+      level = 'medium';
+      color = 'text-yellow-400';
+      bgColor = 'bg-yellow-900/20';
+      borderColor = 'border-yellow-500/50';
+      icon = AlertTriangle;
+      text = 'Medium Risk - Suspicious Activity Detected';
+      details.push(`${vt.malicious} malicious, ${vt.suspicious} suspicious detections`);
+      recommendations.push('⚠️ Monitor closely');
+      recommendations.push('🔍 Consider temporary blocking');
+      recommendations.push('📊 Analyze traffic patterns');
+    } else if (abuse && abuse.abuse_confidence_score > 25) {
+      level = 'medium';
+      color = 'text-yellow-400';
+      bgColor = 'bg-yellow-900/20';
+      borderColor = 'border-yellow-500/50';
+      icon = AlertTriangle;
+      text = 'Medium Risk - Some Abuse Reports';
+      details.push(`${abuse.abuse_confidence_score}% abuse confidence`);
+      recommendations.push('⚠️ Monitor for suspicious behavior');
+      recommendations.push('📊 Check usage context');
+    }
+    // Low Risk
+    else {
+      if (greynoise && greynoise.classification === 'benign') {
+        details.push('Classified as benign by GreyNoise');
+        if (greynoise.name) details.push(`Service: ${greynoise.name}`);
+      }
+      if (vt && vt.harmless > 50) {
+        details.push(`${vt.harmless} vendors marked as harmless`);
+      }
+      if (abuse && abuse.is_whitelisted) {
+        details.push('Whitelisted in AbuseIPDB');
+      }
+      recommendations.push('✅ No immediate action required');
+      recommendations.push('📊 Continue normal monitoring');
     }
     
-    if (vt && (vt.malicious > 0 || vt.suspicious > 0)) {
-      return { level: 'medium', text: 'Medium Risk', color: 'text-yellow-400' };
-    }
-    
-    if (abuse && abuse.abuse_confidence_score > 25) {
-      return { level: 'medium', text: 'Medium Risk', color: 'text-yellow-400' };
-    }
-    
-    return { level: 'low', text: 'Low Risk', color: 'text-green-400' };
+    return { level, color, bgColor, borderColor, icon, text, details, recommendations };
   };
 
   const getSourceUrl = (sourceName, iocValue, iocType) => {
