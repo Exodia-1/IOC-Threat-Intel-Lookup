@@ -158,7 +158,7 @@ const FileAnalysisPage = () => {
                 type="file"
                 onChange={handleFileSelect}
                 className="hidden"
-                id="file-upload"
+                id="file-input"
                 data-testid="file-input"
               />
               <label htmlFor="file-upload" className="cursor-pointer">
