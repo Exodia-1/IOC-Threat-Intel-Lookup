@@ -39,6 +39,28 @@ class StatusCheck(BaseModel):
 class StatusCheckCreate(BaseModel):
     client_name: str
 
+# IOC Models
+class IOCLookupRequest(BaseModel):
+    text: str  # Can contain multiple IOCs
+
+class IOCLookupResult(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    ioc_value: str
+    ioc_type: str
+    results: Dict
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class IOCHistoryResponse(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    
+    id: str
+    ioc_value: str
+    ioc_type: str
+    results: Dict
+    timestamp: datetime
+
 # Add your routes to the router instead of directly to app
 @api_router.get("/")
 async def root():
