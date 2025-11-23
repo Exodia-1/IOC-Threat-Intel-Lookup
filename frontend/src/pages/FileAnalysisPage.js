@@ -187,7 +187,7 @@ const FileAnalysisPage = () => {
           </button>
 
           {/* Upload Results */}
-          {results && activeTab === 'upload' && !results.hash && (
+          {results && (
             <div className="mt-6 space-y-4">
               {/* Risk Score */}
               <div className={`p-4 rounded-lg border ${
