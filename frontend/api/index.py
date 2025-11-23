@@ -1,9 +1,16 @@
+import sys
+import os
+from pathlib import Path
+
+# Add _api to path
+api_path = Path(__file__).parent.parent / "_api"
+sys.path.insert(0, str(api_path))
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
 from routes import api_router
 import logging
-import os
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
