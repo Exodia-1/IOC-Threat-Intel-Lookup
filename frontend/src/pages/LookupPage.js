@@ -118,31 +118,48 @@ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`;
 
       {/* Info Section */}
       <div className="mt-8 bg-slate-900 rounded-lg border border-slate-800 p-6">
-        <h3 className="text-lg font-semibold text-white mb-4">Supported IOC Types</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <h3 className="text-lg font-semibold text-white mb-4">Threat Intelligence Sources</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div className="bg-slate-950 p-4 rounded-lg">
-            <h4 className="text-cyan-400 font-medium mb-2">Network Indicators</h4>
+            <h4 className="text-cyan-400 font-medium mb-2">🔍 For IP Addresses</h4>
             <ul className="text-sm text-slate-400 space-y-1">
-              <li>• IPv4 Addresses</li>
-              <li>• Domain Names</li>
-              <li>• URLs</li>
+              <li>• VirusTotal - Reputation</li>
+              <li>• AbuseIPDB - Abuse Score</li>
+              <li>• GreyNoise - Classification</li>
+              <li>• AlienVault OTX - Pulses</li>
+              <li>• WHOIS - Registration</li>
             </ul>
           </div>
           <div className="bg-slate-950 p-4 rounded-lg">
-            <h4 className="text-cyan-400 font-medium mb-2">File Indicators</h4>
+            <h4 className="text-cyan-400 font-medium mb-2">🌐 For Domains & URLs</h4>
             <ul className="text-sm text-slate-400 space-y-1">
-              <li>• MD5 Hashes</li>
-              <li>• SHA1 Hashes</li>
-              <li>• SHA256 Hashes</li>
+              <li>• VirusTotal - Analysis</li>
+              <li>• urlscan.io - Scanning</li>
+              <li>• AlienVault OTX - Intel</li>
+              <li>• WHOIS - Registration</li>
+              <li>• Screenshot - Visual</li>
             </ul>
           </div>
           <div className="bg-slate-950 p-4 rounded-lg">
-            <h4 className="text-cyan-400 font-medium mb-2">Other Indicators</h4>
+            <h4 className="text-cyan-400 font-medium mb-2">📦 For File Hashes</h4>
             <ul className="text-sm text-slate-400 space-y-1">
-              <li>• Email Addresses</li>
-              <li>• Bulk Lookups</li>
-              <li>• Mixed Types</li>
+              <li>• VirusTotal - Detection</li>
+              <li>• AlienVault OTX - Pulses</li>
+              <li>• Supports MD5/SHA1/SHA256</li>
             </ul>
+          </div>
+        </div>
+        
+        <div className="border-t border-slate-800 pt-4">
+          <h4 className="text-white font-medium mb-2">Supported IOC Types:</h4>
+          <div className="flex flex-wrap gap-2">
+            <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm">IPv4</span>
+            <span className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-sm">Domains</span>
+            <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm">URLs</span>
+            <span className="px-3 py-1 bg-orange-500/20 text-orange-400 rounded-full text-sm">MD5</span>
+            <span className="px-3 py-1 bg-orange-500/20 text-orange-400 rounded-full text-sm">SHA1</span>
+            <span className="px-3 py-1 bg-orange-500/20 text-orange-400 rounded-full text-sm">SHA256</span>
+            <span className="px-3 py-1 bg-pink-500/20 text-pink-400 rounded-full text-sm">Email</span>
           </div>
         </div>
       </div>
