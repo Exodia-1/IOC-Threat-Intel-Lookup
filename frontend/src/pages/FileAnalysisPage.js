@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { FileText, Loader2, AlertCircle, Upload, Hash, Shield, AlertTriangle, CheckCircle } from 'lucide-react';
+import { FileText, Loader2, AlertCircle, Upload, Hash, Shield, AlertTriangle, CheckCircle, X } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
