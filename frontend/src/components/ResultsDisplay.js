@@ -644,23 +644,6 @@ const ResultsDisplay = ({ results }) => {
               </div>
             </div>
 
-            {/* Threat Assessment Box */}
-            <div className={`mb-6 p-4 rounded-lg border ${threat.borderColor} ${threat.bgColor}`}>
-              <div className="flex items-start space-x-3">
-                <ThreatIcon className={`w-6 h-6 ${threat.color} flex-shrink-0 mt-1`} />
-                <div className="flex-1">
-                  <h4 className={`font-semibold ${threat.color} mb-2`}>Threat Assessment</h4>
-                  {threat.details.length > 0 && (
-                    <div className="space-y-1">
-                      {threat.details.map((detail, i) => (
-                        <p key={i} className="text-sm text-slate-300">• {detail}</p>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
             {/* Sources Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {Object.entries(iocResult.sources || {}).map(([sourceName, sourceData]) => (
