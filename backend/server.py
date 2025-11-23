@@ -114,7 +114,7 @@ async def lookup_iocs(request: IOCLookupRequest):
         # Lookup each IOC
         results = []
         for ioc in iocs:
-            lookup_result = aggregator.lookup(ioc['value'], ioc['type'])
+            lookup_result = await aggregator.lookup(ioc['value'], ioc['type'])
             
             # Save to database
             result_obj = IOCLookupResult(
