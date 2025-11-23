@@ -536,6 +536,90 @@ class WHOISService(ThreatIntelService):
             return self.handle_request_error('WHOIS', e)
 
 
+class MXToolboxService(ThreatIntelService):
+    """MXToolbox API integration for DNS and blacklist checks"""
+    
+    def __init__(self):
+        super().__init__()
+        # MXToolbox has a free API with rate limits
+        self.base_url = 'https://mxtoolbox.com/api/v1'
+    
+    def lookup_domain(self, domain: str) -> Dict:
+        """Check domain DNS and blacklist status"""
+        try:
+            # MXToolbox free lookup (using their public DNS check)
+            results = {
+                'mx_records': self._get_mx_records(domain),
+                'blacklist_status': self._check_blacklist_simple(domain),
+                'dns_health': 'Use MXToolbox website for detailed analysis'
+            }
+            
+            return {
+                'success': True,
+                'data': results
+            }
+        
+        except Exception as e:
+            return self.handle_request_error('MXToolbox', e)
+    
+    def lookup_ip(self, ip: str) -> Dict:
+        """Check IP blacklist status"""
+        try:
+            blacklist_status = self._check_blacklist_simple(ip)
+            
+            return {
+                'success': True,
+                'data': {
+                    'blacklist_status': blacklist_status,
+                    'note': 'Use MXToolbox website for detailed blacklist analysis'
+                }
+            }
+        
+        except Exception as e:
+            return self.handle_request_error('MXToolbox', e)
+    
+    def _get_mx_records(self, domain: str) -> str:
+        """Get MX records for domain"""
+        try:
+            import dns.resolver
+            mx_records = dns.resolver.resolve(domain, 'MX')
+            return ', '.join([str(r.exchange) for r in mx_records])
+        except Exception as e:
+            return f'No MX records found: {str(e)[:50]}'
+    
+    def _check_blacklist_simple(self, host: str) -> str:
+        """Simple blacklist check indicator"""
+        # Note: Full blacklist checking requires MXToolbox API key
+        # This provides a basic indicator
+        try:
+            # Check a few common blacklists via DNS
+            import socket
+            reversed_ip = '.'.join(reversed(host.split('.'))) if '.' in host and host.replace('.', '').isdigit() else None
+            
+            if reversed_ip:
+                blacklists = ['zen.spamhaus.org', 'bl.spamcop.net', 'dnsbl.sorbs.net']
+                listed_on = []
+                
+                for bl in blacklists:
+                    try:
+                        query = f"{reversed_ip}.{bl}"
+                        socket.gethostbyname(query)
+                        listed_on.append(bl)
+                    except socket.gaierror:
+                        # Not listed
+                        pass
+                
+                if listed_on:
+                    return f'Listed on: {", ".join(listed_on)}'
+                else:
+                    return 'Not listed on checked blacklists'
+            else:
+                return 'Check manually on MXToolbox website'
+        
+        except Exception as e:
+            return f'Check manually: {str(e)[:30]}'
+
+
 class URLAnalysisService(ThreatIntelService):
     """URL analysis for redirects and embedded URLs"""
     
