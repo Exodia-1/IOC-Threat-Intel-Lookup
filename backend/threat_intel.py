@@ -539,57 +539,6 @@ class WHOISService(ThreatIntelService):
             return self.handle_request_error('WHOIS', e)
 
 
-class ScreenshotService(ThreatIntelService):
-    """Screenshot service for URLs using Playwright"""
-    
-    async def capture_screenshot(self, url: str) -> Dict:
-        """Capture screenshot of URL"""
-        try:
-            async with async_playwright() as p:
-                browser = await p.chromium.launch(
-                    headless=True,
-                    args=[
-                        '--no-sandbox',
-                        '--disable-setuid-sandbox',
-                        '--disable-dev-shm-usage',
-                        '--disable-gpu'
-                    ]
-                )
-                context = await browser.new_context(
-                    viewport={'width': 1280, 'height': 720},
-                    user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-                )
-                page = await context.new_page()
-                
-                # Navigate with timeout
-                try:
-                    await page.goto(url, timeout=15000, wait_until='domcontentloaded')
-                    await page.wait_for_timeout(2000)  # Wait for page to render
-                except Exception as nav_error:
-                    logger.warning(f"Navigation warning for {url}: {nav_error}")
-                
-                # Take screenshot
-                screenshot_bytes = await page.screenshot(type='png', full_page=False)
-                
-                await browser.close()
-                
-                # Convert to base64 for frontend display
-                screenshot_base64 = base64.b64encode(screenshot_bytes).decode('utf-8')
-                
-                return {
-                    'success': True,
-                    'data': {
-                        'screenshot': f'data:image/png;base64,{screenshot_base64}',
-                        'message': 'Screenshot captured successfully',
-                        'url': url
-                    }
-                }
-        
-        except Exception as e:
-            logger.error(f"Screenshot capture failed: {str(e)}")
-            return self.handle_request_error('Screenshot', e)
-
-
 class ThreatIntelAggregator:
     """Aggregate results from multiple threat intelligence sources"""
     
@@ -600,7 +549,6 @@ class ThreatIntelAggregator:
         self.otx = OTXService()
         self.greynoise = GreyNoiseService()
         self.whois_service = WHOISService()
-        self.screenshot = ScreenshotService()
     
     async def lookup(self, ioc_value: str, ioc_type: str) -> Dict:
         """Lookup IOC across all applicable sources"""
