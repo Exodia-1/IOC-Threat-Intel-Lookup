@@ -1,4 +1,4 @@
-import { CheckCircle, XCircle, AlertTriangle, Shield, Activity } from 'lucide-react';
+import { CheckCircle, XCircle, AlertTriangle, Shield, Activity, AlertOctagon, Info, ExternalLink } from 'lucide-react';
 
 const ResultsDisplay = ({ results }) => {
   if (!results || !results.results) return null;
