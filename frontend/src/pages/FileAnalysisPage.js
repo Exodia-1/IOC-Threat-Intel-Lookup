@@ -200,7 +200,7 @@ const FileAnalysisPage = () => {
               <button
                 onClick={handleClear}
                 data-testid="clear-file-btn"
-                className="flex items-center space-x-1 px-4 py-3 text-slate-400 hover:text-red-400 transition-colors"
+                className="flex items-center space-x-2 px-4 py-3 bg-slate-800 hover:bg-red-600 text-slate-300 hover:text-white font-medium rounded-lg transition-colors border border-slate-700 hover:border-red-500"
               >
                 <X className="w-4 h-4" />
                 <span>Clear</span>
