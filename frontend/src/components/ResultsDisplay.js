@@ -110,7 +110,6 @@ const ResultsDisplay = ({ results }) => {
     let icon = CheckCircle;
     let text = 'Low Risk - Appears Safe';
     let details = [];
-    let recommendations = [];
     
     // High Risk Detection
     if (vt && vt.malicious > 5) {
@@ -121,9 +120,7 @@ const ResultsDisplay = ({ results }) => {
       icon = AlertOctagon;
       text = 'High Risk - Confirmed Malicious';
       details.push(`${vt.malicious} security vendors flagged as malicious`);
-      recommendations.push('🚫 Block immediately in firewall/proxy');
-      recommendations.push('🔍 Investigate all systems that contacted this IOC');
-      recommendations.push('📝 Document in incident report');
+      details.push(`${vt.suspicious} suspicious detections`);
     } else if (abuse && abuse.abuse_confidence_score > 75) {
       level = 'high';
       color = 'text-red-400';
@@ -133,8 +130,6 @@ const ResultsDisplay = ({ results }) => {
       text = 'High Risk - Abuse Confirmed';
       details.push(`${abuse.abuse_confidence_score}% abuse confidence score`);
       details.push(`${abuse.total_reports} abuse reports from ${abuse.num_distinct_users} users`);
-      recommendations.push('🚫 Block this IP in security controls');
-      recommendations.push('🔍 Check for lateral movement');
     } else if (greynoise && greynoise.classification === 'malicious') {
       level = 'high';
       color = 'text-red-400';
@@ -143,8 +138,6 @@ const ResultsDisplay = ({ results }) => {
       icon = AlertOctagon;
       text = 'High Risk - Known Malicious Actor';
       details.push('Classified as malicious by GreyNoise');
-      recommendations.push('🚫 Immediate blocking required');
-      recommendations.push('🔍 Review connection logs');
     }
     // Medium Risk Detection
     else if (vt && (vt.malicious > 0 || vt.suspicious > 2)) {
@@ -155,9 +148,6 @@ const ResultsDisplay = ({ results }) => {
       icon = AlertTriangle;
       text = 'Medium Risk - Suspicious Activity Detected';
       details.push(`${vt.malicious} malicious, ${vt.suspicious} suspicious detections`);
-      recommendations.push('⚠️ Monitor closely');
-      recommendations.push('🔍 Consider temporary blocking');
-      recommendations.push('📊 Analyze traffic patterns');
     } else if (abuse && abuse.abuse_confidence_score > 25) {
       level = 'medium';
       color = 'text-yellow-400';
@@ -166,8 +156,7 @@ const ResultsDisplay = ({ results }) => {
       icon = AlertTriangle;
       text = 'Medium Risk - Some Abuse Reports';
       details.push(`${abuse.abuse_confidence_score}% abuse confidence`);
-      recommendations.push('⚠️ Monitor for suspicious behavior');
-      recommendations.push('📊 Check usage context');
+      details.push(`${abuse.total_reports} total reports`);
     }
     // Low Risk
     else {
@@ -181,11 +170,9 @@ const ResultsDisplay = ({ results }) => {
       if (abuse && abuse.is_whitelisted) {
         details.push('Whitelisted in AbuseIPDB');
       }
-      recommendations.push('✅ No immediate action required');
-      recommendations.push('📊 Continue normal monitoring');
     }
     
-    return { level, color, bgColor, borderColor, icon, text, details, recommendations };
+    return { level, color, bgColor, borderColor, icon, text, details };
   };
 
   const getSourceUrl = (sourceName, iocValue, iocType) => {
