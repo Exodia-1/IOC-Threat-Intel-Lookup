@@ -226,9 +226,9 @@ const ResultsDisplay = ({ results }) => {
 
         {success && data ? (
           <>
-            {/* VirusTotal Visual Stats */}
+            {/* VirusTotal - Clean Gauge Display */}
             {name === 'Virustotal' && (
-              <div className="mb-4">
+              <div className="flex flex-col items-center mb-4">
                 {/* File Information for Hashes */}
                 {iocType && ['md5', 'sha1', 'sha256'].includes(iocType) && (
                   <div className="mb-4 p-3 bg-slate-900 rounded-lg border border-slate-700">
