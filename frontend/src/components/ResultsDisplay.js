@@ -380,13 +380,64 @@ const ResultsDisplay = ({ results }) => {
 
   return (
     <div className="space-y-6" data-testid="results-container">
-      {/* Summary */}
+      {/* Visual Summary Dashboard */}
       <div className="bg-slate-900 rounded-lg border border-slate-800 p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xl font-bold text-white">Lookup Results</h3>
-          <span className="text-sm text-slate-400">
-            {results.results.length} IOC{results.results.length !== 1 ? 's' : ''} analyzed
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-3">
+            <BarChart3 className="w-6 h-6 text-cyan-400" />
+            <h3 className="text-2xl font-bold text-white">Analysis Results</h3>
+          </div>
+          <span className="px-4 py-2 bg-cyan-600/20 text-cyan-400 rounded-lg text-sm font-medium border border-cyan-600/50">
+            {results.results.length} IOC{results.results.length !== 1 ? 's' : ''} Analyzed
           </span>
+        </div>
+        
+        {/* Quick Stats Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {results.results.map((iocResult, idx) => {
+            const vt = iocResult.sources?.virustotal?.data;
+            const abuse = iocResult.sources?.abuseipdb?.data;
+            const greynoise = iocResult.sources?.greynoise?.data;
+            const otx = iocResult.sources?.otx?.data;
+            
+            return (
+              <React.Fragment key={idx}>
+                {vt && (
+                  <StatCard 
+                    icon={Shield} 
+                    label="VT Malicious" 
+                    value={vt.malicious || 0}
+                    color={vt.malicious > 5 ? 'text-red-400' : vt.malicious > 0 ? 'text-yellow-400' : 'text-green-400'}
+                  />
+                )}
+                {abuse && (
+                  <StatCard 
+                    icon={AlertTriangle} 
+                    label="Abuse Score" 
+                    value={`${abuse.abuse_confidence_score || 0}%`}
+                    color={abuse.abuse_confidence_score > 75 ? 'text-red-400' : abuse.abuse_confidence_score > 25 ? 'text-yellow-400' : 'text-green-400'}
+                  />
+                )}
+                {greynoise && (
+                  <StatCard 
+                    icon={Activity} 
+                    label="GreyNoise" 
+                    value={String(greynoise.classification || 'N/A').toUpperCase().slice(0, 3)}
+                    color={greynoise.classification === 'malicious' ? 'text-red-400' : greynoise.classification === 'benign' ? 'text-green-400' : 'text-slate-400'}
+                    subtext={greynoise.name}
+                  />
+                )}
+                {otx && (
+                  <StatCard 
+                    icon={Info} 
+                    label="OTX Pulses" 
+                    value={otx.pulse_count || 0}
+                    color={otx.pulse_count > 10 ? 'text-yellow-400' : 'text-blue-400'}
+                  />
+                )}
+              </React.Fragment>
+            );
+          })}
         </div>
       </div>
 
