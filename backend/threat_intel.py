@@ -443,6 +443,144 @@ class OTXService(ThreatIntelService):
             return self.handle_request_error('OTX', e)
 
 
+class GreyNoiseService(ThreatIntelService):
+    """GreyNoise API integration"""
+    
+    def __init__(self):
+        super().__init__()
+        self.api_key = os.environ.get('GREYNOISE_API_KEY')
+        self.base_url = 'https://api.greynoise.io/v3'
+    
+    def lookup_ip(self, ip: str) -> Dict:
+        """Lookup IP address"""
+        if not self.api_key:
+            return {'success': False, 'error': 'API key not configured', 'data': None}
+        
+        try:
+            headers = {
+                'key': self.api_key,
+                'Accept': 'application/json'
+            }
+            
+            response = requests.get(
+                f'{self.base_url}/community/{ip}',
+                headers=headers,
+                timeout=self.timeout
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                return {
+                    'success': True,
+                    'data': {
+                        'classification': data.get('classification', 'unknown'),
+                        'noise': data.get('noise', False),
+                        'riot': data.get('riot', False),
+                        'name': data.get('name', 'Unknown'),
+                        'last_seen': data.get('last_seen', 'Unknown')
+                    }
+                }
+            else:
+                return {'success': False, 'error': f'HTTP {response.status_code}', 'data': None}
+        
+        except Exception as e:
+            return self.handle_request_error('GreyNoise', e)
+
+
+class WHOISService(ThreatIntelService):
+    """WHOIS lookup service (no API key required)"""
+    
+    def lookup_domain(self, domain: str) -> Dict:
+        """Lookup domain WHOIS information"""
+        try:
+            w = whois.whois(domain)
+            
+            # Handle both list and single value returns
+            def get_first(value):
+                if isinstance(value, list):
+                    return value[0] if value else None
+                return value
+            
+            creation_date = get_first(w.creation_date)
+            expiration_date = get_first(w.expiration_date)
+            
+            return {
+                'success': True,
+                'data': {
+                    'domain_name': get_first(w.domain_name),
+                    'registrar': w.registrar,
+                    'creation_date': str(creation_date) if creation_date else 'Unknown',
+                    'expiration_date': str(expiration_date) if expiration_date else 'Unknown',
+                    'status': str(w.status) if w.status else 'Unknown',
+                    'name_servers': ', '.join(w.name_servers) if w.name_servers else 'Unknown'
+                }
+            }
+        
+        except Exception as e:
+            return self.handle_request_error('WHOIS', e)
+    
+    def lookup_ip(self, ip: str) -> Dict:
+        """Lookup IP WHOIS information"""
+        try:
+            w = whois.whois(ip)
+            
+            return {
+                'success': True,
+                'data': {
+                    'org': getattr(w, 'org', 'Unknown'),
+                    'address': getattr(w, 'address', 'Unknown'),
+                    'city': getattr(w, 'city', 'Unknown'),
+                    'country': getattr(w, 'country', 'Unknown')
+                }
+            }
+        
+        except Exception as e:
+            return self.handle_request_error('WHOIS', e)
+
+
+class ScreenshotService(ThreatIntelService):
+    """Screenshot service for URLs using Playwright"""
+    
+    async def capture_screenshot(self, url: str) -> Dict:
+        """Capture screenshot of URL"""
+        try:
+            async with async_playwright() as p:
+                browser = await p.chromium.launch(
+                    args=['--no-sandbox', '--disable-setuid-sandbox']
+                )
+                page = await browser.new_page(viewport={'width': 1280, 'height': 720})
+                
+                # Set timeout and navigate
+                await page.goto(url, timeout=15000, wait_until='networkidle')
+                
+                # Take screenshot
+                screenshot_bytes = await page.screenshot(type='png', full_page=False)
+                
+                await browser.close()
+                
+                # Convert to base64 for frontend display
+                screenshot_base64 = base64.b64encode(screenshot_bytes).decode('utf-8')
+                
+                return {
+                    'success': True,
+                    'data': {
+                        'screenshot': f'data:image/png;base64,{screenshot_base64}',
+                        'message': 'Screenshot captured successfully'
+                    }
+                }
+        
+        except Exception as e:
+            return self.handle_request_error('Screenshot', e)
+    
+    def capture_screenshot_sync(self, url: str) -> Dict:
+        """Synchronous wrapper for screenshot capture"""
+        try:
+            return asyncio.run(self.capture_screenshot(url))
+        except Exception as e:
+            return self.handle_request_error('Screenshot', e)
+
+
 class ThreatIntelAggregator:
     """Aggregate results from multiple threat intelligence sources"""
     
@@ -451,6 +589,9 @@ class ThreatIntelAggregator:
         self.abuseipdb = AbuseIPDBService()
         self.urlscan = URLScanService()
         self.otx = OTXService()
+        self.greynoise = GreyNoiseService()
+        self.whois_service = WHOISService()
+        self.screenshot = ScreenshotService()
     
     def lookup(self, ioc_value: str, ioc_type: str) -> Dict:
         """Lookup IOC across all applicable sources"""
@@ -463,17 +604,21 @@ class ThreatIntelAggregator:
         if ioc_type == 'ipv4':
             results['sources']['virustotal'] = self.vt.lookup_ip(ioc_value)
             results['sources']['abuseipdb'] = self.abuseipdb.lookup_ip(ioc_value)
+            results['sources']['greynoise'] = self.greynoise.lookup_ip(ioc_value)
             results['sources']['otx'] = self.otx.lookup_ip(ioc_value)
+            results['sources']['whois'] = self.whois_service.lookup_ip(ioc_value)
         
         elif ioc_type == 'domain':
             results['sources']['virustotal'] = self.vt.lookup_domain(ioc_value)
             results['sources']['urlscan'] = self.urlscan.lookup_domain(ioc_value)
             results['sources']['otx'] = self.otx.lookup_domain(ioc_value)
+            results['sources']['whois'] = self.whois_service.lookup_domain(ioc_value)
         
         elif ioc_type == 'url':
             results['sources']['virustotal'] = self.vt.lookup_url(ioc_value)
             results['sources']['urlscan'] = self.urlscan.lookup_url(ioc_value)
             results['sources']['otx'] = self.otx.lookup_url(ioc_value)
+            results['sources']['screenshot'] = self.screenshot.capture_screenshot_sync(ioc_value)
         
         elif ioc_type in ['md5', 'sha1', 'sha256']:
             results['sources']['virustotal'] = self.vt.lookup_hash(ioc_value)
