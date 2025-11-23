@@ -402,8 +402,11 @@ const ResultsDisplay = ({ results }) => {
                     {String(data.classification || 'UNKNOWN').toUpperCase()}
                   </div>
                   <p className="text-xs text-slate-400 mb-3">Classification</p>
-                  {data.name && (
+                  {data.name && data.name !== 'Unknown' && (
                     <div className="text-sm text-white font-medium">{data.name}</div>
+                  )}
+                  {data.trust_level && data.trust_level !== 'Unknown' && (
+                    <div className="text-xs text-blue-400 mt-2">Trust: {data.trust_level}</div>
                   )}
                 </div>
                 <div className="mt-3 space-y-2 text-xs">
@@ -419,6 +422,29 @@ const ResultsDisplay = ({ results }) => {
                       {data.riot ? 'Yes' : 'No'}
                     </span>
                   </div>
+                  {data.last_seen && data.last_seen !== 'Unknown' && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Last Seen:</span>
+                      <span className="text-white font-medium">{data.last_seen}</span>
+                    </div>
+                  )}
+                  {data.category && data.category !== 'Unknown' && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Category:</span>
+                      <span className="text-white font-medium">{data.category}</span>
+                    </div>
+                  )}
+                  {data.explanation && data.explanation !== '' && (
+                    <div className="pt-2 border-t border-slate-700">
+                      <span className="text-slate-400 text-xs">Explanation:</span>
+                      <p className="text-slate-300 text-xs mt-1">{data.explanation}</p>
+                    </div>
+                  )}
+                  {data.message && data.message !== '' && (
+                    <div className="pt-2 border-t border-slate-700">
+                      <p className="text-slate-300 text-xs">{data.message}</p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
