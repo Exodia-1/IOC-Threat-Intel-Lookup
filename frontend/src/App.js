@@ -36,7 +36,20 @@ const Navigation = () => {
               }`}
             >
               <Search className="w-4 h-4" />
-              <span>Lookup</span>
+              <span>IOC Lookup</span>
+            </Link>
+            
+            <Link
+              to="/email"
+              data-testid="nav-email"
+              className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+                isActive('/email') 
+                  ? 'bg-cyan-600 text-white' 
+                  : 'text-slate-300 hover:bg-slate-800'
+              }`}
+            >
+              <Mail className="w-4 h-4" />
+              <span>Email Analysis</span>
             </Link>
             
             <Link
