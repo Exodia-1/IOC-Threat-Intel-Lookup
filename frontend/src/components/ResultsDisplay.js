@@ -236,7 +236,8 @@ const ResultsDisplay = ({ results }) => {
 
       {/* Individual IOC Results */}
       {results.results.map((iocResult, index) => {
-        const threatLevel = getThreatLevel(iocResult);
+        const threat = getThreatAssessment(iocResult);
+        const ThreatIcon = threat.icon;
         
         return (
           <div
@@ -250,11 +251,34 @@ const ResultsDisplay = ({ results }) => {
                 <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getTypeColor(iocResult.type)}`}>
                   {iocResult.type.toUpperCase()}
                 </span>
-                <code className="text-lg text-white font-mono">{iocResult.ioc}</code>
+                <code className="text-lg text-white font-mono break-all">{iocResult.ioc}</code>
               </div>
               <div className="flex items-center space-x-2">
-                <Shield className={`w-5 h-5 ${threatLevel.color}`} />
-                <span className={`font-semibold ${threatLevel.color}`}>{threatLevel.text}</span>
+                <ThreatIcon className={`w-5 h-5 ${threat.color}`} />
+                <span className={`font-semibold ${threat.color}`}>{threat.text}</span>
+              </div>
+            </div>
+
+            {/* Threat Assessment Box */}
+            <div className={`mb-6 p-4 rounded-lg border ${threat.borderColor} ${threat.bgColor}`}>
+              <div className="flex items-start space-x-3">
+                <ThreatIcon className={`w-6 h-6 ${threat.color} flex-shrink-0 mt-1`} />
+                <div className="flex-1">
+                  <h4 className={`font-semibold ${threat.color} mb-2`}>Threat Assessment</h4>
+                  {threat.details.length > 0 && (
+                    <div className="mb-3 space-y-1">
+                      {threat.details.map((detail, i) => (
+                        <p key={i} className="text-sm text-slate-300">• {detail}</p>
+                      ))}
+                    </div>
+                  )}
+                  <div className="mt-3 pt-3 border-t border-slate-700">
+                    <p className="text-xs font-semibold text-slate-400 mb-2">RECOMMENDED ACTIONS:</p>
+                    {threat.recommendations.map((rec, i) => (
+                      <p key={i} className="text-sm text-slate-300 mb-1">{rec}</p>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
 
