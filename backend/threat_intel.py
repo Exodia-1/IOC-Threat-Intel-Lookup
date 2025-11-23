@@ -611,14 +611,14 @@ class ThreatIntelAggregator:
             results['sources']['virustotal'] = self.vt.lookup_url(ioc_value)
             results['sources']['urlscan'] = self.urlscan.lookup_url(ioc_value)
             results['sources']['otx'] = self.otx.lookup_url(ioc_value)
-            # Screenshot is optional - don't block on failure
+            # Screenshot with proper error handling
             try:
                 results['sources']['screenshot'] = await self.screenshot.capture_screenshot(ioc_value)
             except Exception as e:
-                logger.warning(f"Screenshot capture failed: {e}")
+                logger.error(f"Screenshot capture failed for {ioc_value}: {str(e)}")
                 results['sources']['screenshot'] = {
                     'success': False,
-                    'error': 'Screenshot service temporarily unavailable',
+                    'error': f'Screenshot failed: {str(e)[:100]}',
                     'data': None
                 }
         
