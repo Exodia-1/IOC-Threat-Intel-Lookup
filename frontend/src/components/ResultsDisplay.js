@@ -316,8 +316,57 @@ const ResultsDisplay = ({ results }) => {
               </div>
             )}
 
+            {/* URL Analysis - Special Display */}
+            {name === 'Url_analysis' && (
+              <div className="mb-4">
+                <div className="mb-3">
+                  <div className={`p-3 rounded-lg ${data.has_redirects ? 'bg-yellow-900/20 border border-yellow-500/30' : 'bg-green-900/20 border border-green-500/30'}`}>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs text-slate-400">Redirects:</span>
+                      <span className={`font-bold text-sm ${data.has_redirects ? 'text-yellow-400' : 'text-green-400'}`}>
+                        {data.has_redirects ? `${data.redirect_count} Redirect(s)` : 'No Redirects'}
+                      </span>
+                    </div>
+                    {data.redirect_chain && data.redirect_chain.length > 0 && (
+                      <div className="mt-2 space-y-1">
+                        {data.redirect_chain.map((redirect, idx) => (
+                          <div key={idx} className="text-xs text-slate-300 flex items-center space-x-2">
+                            <span className="text-yellow-400">→</span>
+                            <span className="truncate">{redirect.url}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="mb-3">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-xs text-slate-400">Extracted URLs:</span>
+                    <span className="text-sm font-bold text-cyan-400">{data.extracted_urls_count || 0}</span>
+                  </div>
+                  {data.extracted_urls && data.extracted_urls.length > 0 && (
+                    <div className="bg-slate-900 rounded-lg p-2 max-h-40 overflow-y-auto">
+                      {data.extracted_urls.slice(0, 10).map((url, idx) => (
+                        <div key={idx} className="text-xs text-slate-300 mb-1 truncate">
+                          • {url}
+                        </div>
+                      ))}
+                      {data.extracted_urls.length > 10 && (
+                        <p className="text-xs text-slate-500 mt-1">... and {data.extracted_urls.length - 10} more</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+                
+                <div className="text-xs text-slate-400">
+                  Status Code: <span className={`font-semibold ${data.status_code === 200 ? 'text-green-400' : 'text-yellow-400'}`}>{data.status_code}</span>
+                </div>
+              </div>
+            )}
+
             {/* Other Sources - Compact View */}
-            {!['Virustotal', 'Abuseipdb', 'Greynoise'].includes(name) && (
+            {!['Virustotal', 'Abuseipdb', 'Greynoise', 'Url_analysis'].includes(name) && (
               <div className="space-y-2 text-sm mb-3">
                 {Object.entries(data).map(([key, value]) => {
                   if (value === null || value === undefined) return null;
