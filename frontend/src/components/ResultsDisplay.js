@@ -230,9 +230,9 @@ const ResultsDisplay = ({ results }) => {
             {name === 'Virustotal' && (
               <div className="flex flex-col items-center mb-4">
                 <ScoreGauge 
-                  score={data.malicious + data.suspicious}
+                  score={data.malicious}
                   maxScore={data.total_scans || 1}
-                  label="Vendors Flagged"
+                  label="Malicious Detections"
                   thresholds={{ high: Math.floor((data.total_scans || 1) * 0.3), medium: 1 }}
                 />
                 <div className="w-full mt-4 space-y-2 text-xs">
