@@ -1,3 +1,4 @@
+import React from 'react';
 import { CheckCircle, XCircle, AlertTriangle, Shield, Activity, AlertOctagon, Info, ExternalLink, TrendingUp, BarChart3, PieChart } from 'lucide-react';
 
 const ResultsDisplay = ({ results }) => {
