@@ -223,21 +223,10 @@ const ResultsDisplay = ({ results }) => {
     
     return (
       <div className="bg-slate-950 rounded-lg p-4 border border-slate-800 hover:border-cyan-600/50 transition-all">
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2">
-            <SourceIcon className="w-4 h-4 text-cyan-400" />
-            <h4 className="font-semibold text-white">{name}</h4>
-            {referralUrl && (
-              <a 
-                href={referralUrl} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-cyan-400 hover:text-cyan-300 transition-colors"
-                title={`View on ${name}`}
-              >
-                <ExternalLink className="w-3 h-3" />
-              </a>
-            )}
+            <SourceIcon className="w-5 h-5 text-cyan-400" />
+            <h4 className="font-semibold text-white text-sm">{name}</h4>
           </div>
           {success ? (
             <CheckCircle className="w-5 h-5 text-green-400" />
@@ -248,72 +237,139 @@ const ResultsDisplay = ({ results }) => {
 
         {success && data ? (
           <>
-            <div className="space-y-2 text-sm mb-3">
-              {Object.entries(data).map(([key, value]) => {
-                if (value === null || value === undefined || key === 'screenshot') return null;
-                
-                // Special formatting for threat indicators
-                let displayClass = 'text-slate-200';
-                let displayValue = value;
-                
-                // GreyNoise classification
-                if (name === 'Greynoise' && key === 'classification') {
-                  const classColors = {
-                    'malicious': 'text-red-400 font-bold',
-                    'benign': 'text-green-400 font-bold',
-                    'unknown': 'text-slate-400'
-                  };
-                  displayClass = classColors[value] || 'text-slate-200';
-                  displayValue = String(value).toUpperCase();
-                }
-                
-                // VirusTotal malicious count
-                if (name === 'Virustotal' && key === 'malicious' && value > 0) {
-                  displayClass = 'text-red-400 font-bold';
-                }
-                
-                // AbuseIPDB confidence score
-                if (name === 'Abuseipdb' && key === 'abuse_confidence_score') {
-                  if (value > 75) displayClass = 'text-red-400 font-bold';
-                  else if (value > 25) displayClass = 'text-yellow-400 font-bold';
-                  else displayClass = 'text-green-400';
-                  displayValue = `${value}%`;
-                }
-                
-                return (
-                  <div key={key} className="flex justify-between items-start">
-                    <span className="text-slate-400 capitalize text-xs">{key.replace(/_/g, ' ')}:</span>
-                    <span className={`font-medium break-all max-w-[180px] text-right text-xs ${displayClass}`}>
-                      {typeof displayValue === 'object' ? JSON.stringify(displayValue) : String(displayValue)}
+            {/* VirusTotal Visual Stats */}
+            {name === 'Virustotal' && (
+              <div className="mb-4">
+                <ProgressBar 
+                  value={data.malicious || 0} 
+                  max={100} 
+                  color="bg-red-500" 
+                  label="Malicious" 
+                />
+                <ProgressBar 
+                  value={data.suspicious || 0} 
+                  max={50} 
+                  color="bg-yellow-500" 
+                  label="Suspicious" 
+                />
+                <ProgressBar 
+                  value={data.harmless || 0} 
+                  max={100} 
+                  color="bg-green-500" 
+                  label="Harmless" 
+                />
+                <div className="mt-3 pt-3 border-t border-slate-800">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-slate-400">Reputation:</span>
+                    <span className={`font-bold ${data.reputation > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      {data.reputation || 0}
                     </span>
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              </div>
+            )}
+
+            {/* AbuseIPDB Score Gauge */}
+            {name === 'Abuseipdb' && (
+              <div className="flex flex-col items-center mb-4">
+                <ScoreGauge 
+                  score={data.abuse_confidence_score || 0}
+                  maxScore={100}
+                  label="Abuse Confidence"
+                  thresholds={{ high: 75, medium: 25 }}
+                />
+                <div className="w-full mt-4 space-y-2 text-xs">
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Total Reports:</span>
+                    <span className="text-white font-semibold">{data.total_reports || 0}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Country:</span>
+                    <span className="text-white font-semibold">{data.country_code || 'N/A'}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* GreyNoise Classification Badge */}
+            {name === 'Greynoise' && (
+              <div className="mb-4">
+                <div className={`text-center py-8 rounded-lg ${
+                  data.classification === 'malicious' ? 'bg-red-900/30 border-2 border-red-500' :
+                  data.classification === 'benign' ? 'bg-green-900/30 border-2 border-green-500' :
+                  'bg-slate-800 border-2 border-slate-600'
+                }`}>
+                  <div className={`text-3xl font-bold mb-2 ${
+                    data.classification === 'malicious' ? 'text-red-400' :
+                    data.classification === 'benign' ? 'text-green-400' :
+                    'text-slate-400'
+                  }`}>
+                    {String(data.classification || 'UNKNOWN').toUpperCase()}
+                  </div>
+                  <p className="text-xs text-slate-400 mb-3">Classification</p>
+                  {data.name && (
+                    <div className="text-sm text-white font-medium">{data.name}</div>
+                  )}
+                </div>
+                <div className="mt-3 space-y-2 text-xs">
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Internet Scanner:</span>
+                    <span className={data.noise ? 'text-yellow-400' : 'text-green-400'}>
+                      {data.noise ? 'Yes' : 'No'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">RIOT (Common Service):</span>
+                    <span className={data.riot ? 'text-green-400' : 'text-slate-400'}>
+                      {data.riot ? 'Yes' : 'No'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Other Sources - Compact View */}
+            {!['Virustotal', 'Abuseipdb', 'Greynoise'].includes(name) && (
+              <div className="space-y-2 text-sm mb-3">
+                {Object.entries(data).map(([key, value]) => {
+                  if (value === null || value === undefined) return null;
+                  
+                  return (
+                    <div key={key} className="flex justify-between items-start">
+                      <span className="text-slate-400 capitalize text-xs">{key.replace(/_/g, ' ')}:</span>
+                      <span className="font-medium text-white text-xs max-w-[180px] text-right break-all">
+                        {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
             
             {referralUrl && (
               <a 
                 href={referralUrl} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="flex items-center justify-center space-x-1 mt-3 px-3 py-1.5 bg-cyan-600/20 hover:bg-cyan-600/30 border border-cyan-600/50 rounded text-xs text-cyan-400 hover:text-cyan-300 transition-all"
+                className="flex items-center justify-center space-x-2 mt-4 px-4 py-2 bg-cyan-600/20 hover:bg-cyan-600/30 border border-cyan-600/50 rounded-lg text-sm text-cyan-400 hover:text-cyan-300 transition-all font-medium"
               >
-                <span>Full Report</span>
-                <ExternalLink className="w-3 h-3" />
+                <span>View Full Report</span>
+                <ExternalLink className="w-4 h-4" />
               </a>
             )}
           </>
         ) : (
           <div className="text-sm">
-            <p className="text-red-400 mb-2">{error || 'No data available'}</p>
+            <p className="text-red-400 mb-3">{error || 'No data available'}</p>
             {referralUrl && (
               <a 
                 href={referralUrl} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-xs text-cyan-400 hover:text-cyan-300"
+                className="flex items-center justify-center space-x-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm text-slate-300 hover:text-white transition-all"
               >
-                Check manually on {name} →
+                <span>Check on {name}</span>
+                <ExternalLink className="w-4 h-4" />
               </a>
             )}
           </div>
