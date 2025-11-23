@@ -161,7 +161,7 @@ const FileAnalysisPage = () => {
                 id="file-input"
                 data-testid="file-input"
               />
-              <label htmlFor="file-upload" className="cursor-pointer">
+              <label htmlFor="file-input" className="cursor-pointer">
                 <Upload className="w-12 h-12 text-slate-600 mx-auto mb-4" />
                 <p className="text-slate-400 mb-2">Click to select file or drag and drop</p>
                 <p className="text-xs text-slate-500">Maximum file size: 10MB</p>
