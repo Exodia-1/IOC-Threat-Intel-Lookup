@@ -294,24 +294,37 @@ const EmailAnalysisPage = () => {
             />
           </div>
 
-          <button
-            onClick={handleHeaderAnalysis}
-            disabled={loading}
-            data-testid="analyze-headers-btn"
-            className="flex items-center space-x-2 px-6 py-3 bg-cyan-600 hover:bg-cyan-700 disabled:bg-slate-700 text-white font-medium rounded-lg transition-colors"
-          >
-            {loading ? (
-              <>
-                <Loader2 className="w-5 h-5 animate-spin" />
-                <span>Analyzing...</span>
-              </>
-            ) : (
-              <>
-                <Activity className="w-5 h-5" />
-                <span>Analyze Headers</span>
-              </>
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={handleHeaderAnalysis}
+              disabled={loading}
+              data-testid="analyze-headers-btn"
+              className="flex items-center space-x-2 px-6 py-3 bg-cyan-600 hover:bg-cyan-700 disabled:bg-slate-700 text-white font-medium rounded-lg transition-colors"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Analyzing...</span>
+                </>
+              ) : (
+                <>
+                  <Activity className="w-5 h-5" />
+                  <span>Analyze Headers</span>
+                </>
+              )}
+            </button>
+
+            {headersInput && (
+              <button
+                onClick={handleClearHeaders}
+                data-testid="clear-headers-btn"
+                className="flex items-center space-x-1 px-4 py-3 text-slate-400 hover:text-red-400 transition-colors"
+              >
+                <X className="w-4 h-4" />
+                <span>Clear</span>
+              </button>
             )}
-          </button>
+          </div>
 
           {/* Header Analysis Results */}
           {results && activeTab === 'headers' && (
