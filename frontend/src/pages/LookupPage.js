@@ -49,6 +49,12 @@ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`;
     setInputText(exampleIOCs);
   };
 
+  const handleClear = () => {
+    setInputText('');
+    setResults(null);
+    setError(null);
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       {/* Header */}
