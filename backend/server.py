@@ -90,6 +90,96 @@ async def get_status_checks():
     
     return status_checks
 
+# IOC Lookup Endpoints
+@api_router.post("/ioc/lookup")
+async def lookup_iocs(request: IOCLookupRequest):
+    """
+    Lookup IOCs across multiple threat intelligence sources
+    Supports bulk lookup - paste multiple IOCs separated by newlines
+    """
+    try:
+        # Extract and classify IOCs
+        iocs = IOCDetector.extract_iocs(request.text)
+        
+        if not iocs:
+            return {
+                'success': False,
+                'message': 'No valid IOCs detected',
+                'results': []
+            }
+        
+        # Initialize threat intel aggregator
+        aggregator = ThreatIntelAggregator()
+        
+        # Lookup each IOC
+        results = []
+        for ioc in iocs:
+            lookup_result = aggregator.lookup(ioc['value'], ioc['type'])
+            
+            # Save to database
+            result_obj = IOCLookupResult(
+                ioc_value=ioc['value'],
+                ioc_type=ioc['type'],
+                results=lookup_result
+            )
+            
+            doc = result_obj.model_dump()
+            doc['timestamp'] = doc['timestamp'].isoformat()
+            
+            await db.ioc_lookups.insert_one(doc)
+            
+            results.append(lookup_result)
+        
+        return {
+            'success': True,
+            'message': f'Looked up {len(results)} IOCs',
+            'results': results
+        }
+    
+    except Exception as e:
+        logger.error(f"IOC lookup error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/ioc/history")
+async def get_ioc_history(limit: int = 50):
+    """Get IOC lookup history"""
+    try:
+        # Get recent lookups, sorted by timestamp descending
+        history = await db.ioc_lookups.find(
+            {},
+            {"_id": 0}
+        ).sort('timestamp', -1).limit(limit).to_list(limit)
+        
+        # Convert ISO string timestamps back to datetime objects
+        for item in history:
+            if isinstance(item['timestamp'], str):
+                item['timestamp'] = datetime.fromisoformat(item['timestamp'])
+        
+        return {
+            'success': True,
+            'count': len(history),
+            'history': history
+        }
+    
+    except Exception as e:
+        logger.error(f"History retrieval error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/ioc/stats")
+async def get_ioc_stats():
+    """Get statistics about IOC lookups"""
+    try:
+        total_lookups = await db.ioc_lookups.count_documents({})
+        
+        return {
+            'success': True,
+            'total_lookups': total_lookups
+        }
+    
+    except Exception as e:
+        logger.error(f"Stats retrieval error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Include the router in the main app
 app.include_router(api_router)
 
