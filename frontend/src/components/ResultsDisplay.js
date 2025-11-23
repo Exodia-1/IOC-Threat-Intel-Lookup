@@ -16,6 +16,86 @@ const ResultsDisplay = ({ results }) => {
     return colors[type] || 'bg-slate-500/20 text-slate-400 border-slate-500/30';
   };
 
+  const ProgressBar = ({ value, max, color, label }) => {
+    const percentage = max > 0 ? (value / max) * 100 : 0;
+    return (
+      <div className="mb-2">
+        <div className="flex justify-between mb-1">
+          <span className="text-xs text-slate-400">{label}</span>
+          <span className="text-xs font-bold text-white">{value}</span>
+        </div>
+        <div className="w-full bg-slate-800 rounded-full h-2">
+          <div 
+            className={`h-2 rounded-full ${color}`}
+            style={{ width: `${Math.min(percentage, 100)}%` }}
+          />
+        </div>
+      </div>
+    );
+  };
+
+  const ScoreGauge = ({ score, maxScore = 100, label, thresholds }) => {
+    const percentage = (score / maxScore) * 100;
+    let color = 'bg-green-500';
+    let textColor = 'text-green-400';
+    
+    if (thresholds) {
+      if (score >= thresholds.high) {
+        color = 'bg-red-500';
+        textColor = 'text-red-400';
+      } else if (score >= thresholds.medium) {
+        color = 'bg-yellow-500';
+        textColor = 'text-yellow-400';
+      }
+    }
+    
+    return (
+      <div className="text-center">
+        <div className="relative inline-flex items-center justify-center w-24 h-24">
+          <svg className="w-24 h-24 transform -rotate-90">
+            <circle
+              cx="48"
+              cy="48"
+              r="40"
+              stroke="currentColor"
+              strokeWidth="8"
+              fill="none"
+              className="text-slate-700"
+            />
+            <circle
+              cx="48"
+              cy="48"
+              r="40"
+              stroke="currentColor"
+              strokeWidth="8"
+              fill="none"
+              strokeDasharray={`${2 * Math.PI * 40}`}
+              strokeDashoffset={`${2 * Math.PI * 40 * (1 - percentage / 100)}`}
+              className={color.replace('bg-', 'text-')}
+              strokeLinecap="round"
+            />
+          </svg>
+          <div className="absolute text-center">
+            <div className={`text-2xl font-bold ${textColor}`}>{score}</div>
+            <div className="text-xs text-slate-400">/ {maxScore}</div>
+          </div>
+        </div>
+        <p className="text-xs text-slate-400 mt-2">{label}</p>
+      </div>
+    );
+  };
+
+  const StatCard = ({ icon: Icon, label, value, color, subtext }) => (
+    <div className="bg-slate-950 rounded-lg p-4 border border-slate-800">
+      <div className="flex items-center justify-between mb-2">
+        <Icon className={`w-5 h-5 ${color}`} />
+        <span className={`text-2xl font-bold ${color}`}>{value}</span>
+      </div>
+      <p className="text-sm text-slate-400">{label}</p>
+      {subtext && <p className="text-xs text-slate-500 mt-1">{subtext}</p>}
+    </div>
+  );
+
   const getThreatAssessment = (iocResult) => {
     const sources = iocResult.sources || {};
     const vt = sources.virustotal?.data;
