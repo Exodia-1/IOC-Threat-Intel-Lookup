@@ -208,6 +208,35 @@ async def get_ioc_stats():
         logger.error(f"Stats retrieval error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# Email Analysis Endpoints
+class EmailDomainRequest(BaseModel):
+    email: str
+
+class EmailHeaderRequest(BaseModel):
+    headers: str
+
+@api_router.post("/email/check-domain")
+async def check_email_domain(request: EmailDomainRequest):
+    """Check email domain for security records"""
+    try:
+        result = EmailAnalyzer.check_email_domain(request.email)
+        return result
+    
+    except Exception as e:
+        logger.error(f"Email domain check error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/email/analyze-headers")
+async def analyze_email_headers(request: EmailHeaderRequest):
+    """Analyze email headers for threat indicators"""
+    try:
+        result = EmailAnalyzer.analyze_email_headers(request.headers)
+        return result
+    
+    except Exception as e:
+        logger.error(f"Email header analysis error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Include the router in the main app
 app.include_router(api_router)
 
