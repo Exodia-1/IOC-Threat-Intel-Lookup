@@ -326,9 +326,62 @@ const ResultsDisplay = ({ results }) => {
                     <span className="text-white font-semibold">{data.total_reports || 0}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-400">Country:</span>
-                    <span className="text-white font-semibold">{data.country_code || 'N/A'}</span>
+                    <span className="text-slate-400">Distinct Users:</span>
+                    <span className="text-white font-semibold">{data.num_distinct_users || 0}</span>
                   </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Country:</span>
+                    <span className="text-white font-semibold">{data.country_name || data.country_code || 'N/A'}</span>
+                  </div>
+                  {data.isp && data.isp !== 'Unknown' && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">ISP:</span>
+                      <span className="text-white font-semibold text-right max-w-[180px] truncate">{data.isp}</span>
+                    </div>
+                  )}
+                  {data.usage_type && data.usage_type !== 'Unknown' && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Usage Type:</span>
+                      <span className="text-white font-semibold">{data.usage_type}</span>
+                    </div>
+                  )}
+                  {data.domain && data.domain !== 'Unknown' && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Domain:</span>
+                      <span className="text-white font-semibold">{data.domain}</span>
+                    </div>
+                  )}
+                  {data.is_whitelisted && (
+                    <div className="text-xs text-green-400 bg-green-900/20 p-1 rounded mt-2">
+                      ✓ Whitelisted
+                    </div>
+                  )}
+                  {data.is_tor && (
+                    <div className="text-xs text-yellow-400 bg-yellow-900/20 p-1 rounded mt-2">
+                      ⚠️ Tor Exit Node
+                    </div>
+                  )}
+                  {data.recent_reports && data.recent_reports.length > 0 && (
+                    <div className="pt-2 border-t border-slate-700">
+                      <span className="text-slate-400 text-xs mb-1 block">Recent Reports:</span>
+                      <div className="max-h-32 overflow-y-auto space-y-1">
+                        {data.recent_reports.map((report, idx) => (
+                          <div key={idx} className="text-xs bg-slate-800 p-2 rounded">
+                            <div className="text-slate-300 mb-1">{report.comment || 'No comment'}</div>
+                            {report.categories && report.categories.length > 0 && (
+                              <div className="flex flex-wrap gap-1">
+                                {report.categories.map((cat, i) => (
+                                  <span key={i} className="px-1 py-0.5 bg-red-900/30 text-red-300 rounded text-xs">
+                                    {cat}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
