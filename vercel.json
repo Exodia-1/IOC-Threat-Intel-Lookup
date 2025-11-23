@@ -1,35 +1,17 @@
 {
-  "version": 2,
-  "name": "cti-ioc-lookup",
-  "builds": [
+  "buildCommand": "cd frontend && yarn install && yarn build",
+  "outputDirectory": "frontend/build",
+  "devCommand": "cd frontend && yarn start",
+  "installCommand": "cd backend && pip install -r requirements.txt && cd ../frontend && yarn install",
+  "framework": null,
+  "rewrites": [
     {
-      "src": "backend/main.py",
-      "use": "@vercel/python"
+      "source": "/api/(.*)",
+      "destination": "/api/index.py"
     },
     {
-      "src": "frontend/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "frontend/build"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "backend/main.py"
-    },
-    {
-      "src": "/health",
-      "dest": "backend/main.py"
-    },
-    {
-      "src": "/static/(.*)",
-      "dest": "frontend/build/static/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "frontend/build/index.html"
+      "source": "/health",
+      "destination": "/api/index.py"
     }
   ]
 }
