@@ -141,14 +141,37 @@ async def lookup_iocs(request: IOCLookupRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.get("/ioc/history")
-async def get_ioc_history(limit: int = 50):
-    """Get IOC lookup history"""
+async def get_ioc_history(page: int = 1, per_page: int = 20):
+    """Get IOC lookup history with pagination"""
     try:
-        # Get recent lookups, sorted by timestamp descending
+        # Enforce maximum database size of 150 entries
+        total_count = await db.ioc_lookups.count_documents({})
+        
+        # Delete oldest entries if exceeding 150
+        if total_count > 150:
+            # Get the 150th most recent timestamp
+            entries_to_keep = await db.ioc_lookups.find(
+                {},
+                {"timestamp": 1}
+            ).sort('timestamp', -1).limit(150).to_list(150)
+            
+            if entries_to_keep:
+                cutoff_timestamp = entries_to_keep[-1]['timestamp']
+                # Delete entries older than cutoff
+                await db.ioc_lookups.delete_many({
+                    'timestamp': {'$lt': cutoff_timestamp}
+                })
+                total_count = 150
+        
+        # Calculate pagination
+        skip = (page - 1) * per_page
+        total_pages = (total_count + per_page - 1) // per_page
+        
+        # Get paginated results
         history = await db.ioc_lookups.find(
             {},
             {"_id": 0}
-        ).sort('timestamp', -1).limit(limit).to_list(limit)
+        ).sort('timestamp', -1).skip(skip).limit(per_page).to_list(per_page)
         
         # Convert ISO string timestamps back to datetime objects
         for item in history:
@@ -158,6 +181,10 @@ async def get_ioc_history(limit: int = 50):
         return {
             'success': True,
             'count': len(history),
+            'total': total_count,
+            'page': page,
+            'per_page': per_page,
+            'total_pages': total_pages,
             'history': history
         }
     
