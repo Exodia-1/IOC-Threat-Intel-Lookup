@@ -366,8 +366,41 @@ const ResultsDisplay = ({ results }) => {
               </div>
             )}
 
+            {/* MXToolbox - Special Display */}
+            {name === 'Mxtoolbox' && (
+              <div className="mb-4">
+                <div className={`p-3 rounded-lg ${
+                  data.blacklist_status?.includes('Listed on') 
+                    ? 'bg-red-900/20 border border-red-500/30' 
+                    : 'bg-green-900/20 border border-green-500/30'
+                }`}>
+                  <div className="mb-2">
+                    <span className="text-xs text-slate-400">Blacklist Status:</span>
+                    <div className={`text-sm font-medium mt-1 ${
+                      data.blacklist_status?.includes('Listed on') 
+                        ? 'text-red-400' 
+                        : 'text-green-400'
+                    }`}>
+                      {data.blacklist_status || 'Unknown'}
+                    </div>
+                  </div>
+                  {data.mx_records && (
+                    <div className="mt-3 pt-3 border-t border-slate-700">
+                      <span className="text-xs text-slate-400">MX Records:</span>
+                      <div className="text-xs text-slate-300 mt-1 break-all">
+                        {data.mx_records}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                {data.note && (
+                  <p className="text-xs text-slate-500 mt-2">ℹ️ {data.note}</p>
+                )}
+              </div>
+            )}
+
             {/* Other Sources - Compact View */}
-            {!['Virustotal', 'Abuseipdb', 'Greynoise', 'Url_analysis'].includes(name) && (
+            {!['Virustotal', 'Abuseipdb', 'Greynoise', 'Url_analysis', 'Mxtoolbox'].includes(name) && (
               <div className="space-y-2 text-sm mb-3">
                 {Object.entries(data).map(([key, value]) => {
                   if (value === null || value === undefined) return null;
