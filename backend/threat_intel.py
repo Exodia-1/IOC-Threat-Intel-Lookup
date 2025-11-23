@@ -630,6 +630,7 @@ class ThreatIntelAggregator:
             results['sources']['virustotal'] = self.vt.lookup_url(ioc_value)
             results['sources']['urlscan'] = self.urlscan.lookup_url(ioc_value)
             results['sources']['otx'] = self.otx.lookup_url(ioc_value)
+            results['sources']['url_analysis'] = self.url_analyzer.analyze_url(ioc_value)
         
         elif ioc_type in ['md5', 'sha1', 'sha256']:
             results['sources']['virustotal'] = self.vt.lookup_hash(ioc_value)
