@@ -183,13 +183,21 @@ class VirusTotalService(ThreatIntelService):
                 names = attributes.get('names', [])
                 meaningful_name = attributes.get('meaningful_name', '')
                 
+                malicious = stats.get('malicious', 0)
+                suspicious = stats.get('suspicious', 0)
+                harmless = stats.get('harmless', 0)
+                undetected = stats.get('undetected', 0)
+                total_scans = malicious + suspicious + harmless + undetected
+                
                 return {
                     'success': True,
                     'data': {
-                        'malicious': stats.get('malicious', 0),
-                        'suspicious': stats.get('suspicious', 0),
-                        'harmless': stats.get('harmless', 0),
-                        'undetected': stats.get('undetected', 0),
+                        'malicious': malicious,
+                        'suspicious': suspicious,
+                        'harmless': harmless,
+                        'undetected': undetected,
+                        'total_scans': total_scans,
+                        'detection_ratio': f"{malicious + suspicious}/{total_scans}",
                         'file_type': attributes.get('type_description', 'Unknown'),
                         'file_extension': attributes.get('type_extension', 'Unknown'),
                         'file_name': meaningful_name or (names[0] if names else 'Unknown'),
