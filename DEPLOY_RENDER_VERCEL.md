@@ -103,6 +103,8 @@ Build Command: pip install -r requirements.txt
 Start Command: uvicorn main:app --host 0.0.0.0 --port $PORT
 ```
 
+**Important**: Make sure you use `main:app` (not `server:app`) for the new modular structure.
+
 **Instance Type:**
 ```
 Free
