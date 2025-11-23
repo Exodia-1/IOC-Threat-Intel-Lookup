@@ -76,32 +76,22 @@ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`;
         </div>
 
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
+          {inputText && (
             <button
-              onClick={loadExample}
-              data-testid="load-example-btn"
-              className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors"
+              onClick={handleClear}
+              data-testid="clear-btn"
+              className="flex items-center space-x-2 px-4 py-2 bg-slate-800 hover:bg-red-600 text-slate-300 hover:text-white font-medium rounded-lg transition-colors border border-slate-700 hover:border-red-500"
             >
-              Load Example IOCs
+              <X className="w-4 h-4" />
+              <span>Clear</span>
             </button>
-            
-            {inputText && (
-              <button
-                onClick={handleClear}
-                data-testid="clear-btn"
-                className="flex items-center space-x-1 text-sm text-slate-400 hover:text-red-400 transition-colors"
-              >
-                <X className="w-4 h-4" />
-                <span>Clear</span>
-              </button>
-            )}
-          </div>
+          )}
 
           <button
             onClick={handleLookup}
             disabled={loading || !inputText.trim()}
             data-testid="lookup-btn"
-            className="flex items-center space-x-2 px-6 py-3 bg-cyan-600 hover:bg-cyan-700 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
+            className="flex items-center space-x-2 px-6 py-3 bg-cyan-600 hover:bg-cyan-700 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors ml-auto"
           >
             {loading ? (
               <>
