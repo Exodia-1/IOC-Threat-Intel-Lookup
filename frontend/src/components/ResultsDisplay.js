@@ -200,7 +200,8 @@ const ResultsDisplay = ({ results }) => {
       'Greynoise': Activity,
       'Urlscan': ExternalLink,
       'Otx': Info,
-      'Whois': Info
+      'Whois': Info,
+      'Mxtoolbox': Shield
     };
     return icons[name] || Info;
   };
