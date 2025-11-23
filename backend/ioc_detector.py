@@ -14,6 +14,40 @@ class IOCDetector:
     SHA256_PATTERN = r'\b[a-fA-F0-9]{64}\b'
     
     @staticmethod
+    def defang_ioc(ioc: str) -> str:
+        """
+        Defang IOCs - convert fanged IOCs back to normal format
+        Examples:
+          hxxp://example[.]com -> http://example.com
+          192[.]168[.]1[.]1 -> 192.168.1.1
+          example[.]com -> example.com
+          user[@]example[.]com -> user@example.com
+        """
+        # Replace hxxp/hxxps with http/https
+        ioc = ioc.replace('hxxp://', 'http://')
+        ioc = ioc.replace('hxxps://', 'https://')
+        ioc = ioc.replace('hXXp://', 'http://')
+        ioc = ioc.replace('hXXps://', 'https://')
+        
+        # Replace [.] with .
+        ioc = ioc.replace('[.]', '.')
+        ioc = ioc.replace('[dot]', '.')
+        ioc = ioc.replace('(dot)', '.')
+        ioc = ioc.replace('(.)', '.')
+        
+        # Replace [@] with @
+        ioc = ioc.replace('[@]', '@')
+        ioc = ioc.replace('[at]', '@')
+        ioc = ioc.replace('(at)', '@')
+        ioc = ioc.replace('(@)', '@')
+        
+        # Replace [://] with ://
+        ioc = ioc.replace('[://]', '://')
+        ioc = ioc.replace('[:]', ':')
+        
+        return ioc
+    
+    @staticmethod
     def is_valid_ipv4(ip: str) -> bool:
         """Validate IPv4 address"""
         try:
