@@ -169,19 +169,20 @@ const ResultsDisplay = ({ results }) => {
     }
     
     return (
-      <div className="bg-slate-950 rounded-lg p-4 border border-slate-800">
+      <div className="bg-slate-950 rounded-lg p-4 border border-slate-800 hover:border-cyan-600/50 transition-all">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center space-x-2">
+            <SourceIcon className="w-4 h-4 text-cyan-400" />
             <h4 className="font-semibold text-white">{name}</h4>
             {referralUrl && (
               <a 
                 href={referralUrl} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-cyan-400 hover:text-cyan-300 text-xs"
+                className="text-cyan-400 hover:text-cyan-300 transition-colors"
                 title={`View on ${name}`}
               >
-                ↗
+                <ExternalLink className="w-3 h-3" />
               </a>
             )}
           </div>
@@ -193,50 +194,76 @@ const ResultsDisplay = ({ results }) => {
         </div>
 
         {success && data ? (
-          <div className="space-y-2 text-sm">
-            {Object.entries(data).map(([key, value]) => {
-              if (value === null || value === undefined || key === 'screenshot') return null;
-              
-              // Special formatting for GreyNoise classification
-              if (name === 'Greynoise' && key === 'classification') {
-                const classColors = {
-                  'malicious': 'text-red-400',
-                  'benign': 'text-green-400',
-                  'unknown': 'text-slate-400'
-                };
+          <>
+            <div className="space-y-2 text-sm mb-3">
+              {Object.entries(data).map(([key, value]) => {
+                if (value === null || value === undefined || key === 'screenshot') return null;
+                
+                // Special formatting for threat indicators
+                let displayClass = 'text-slate-200';
+                let displayValue = value;
+                
+                // GreyNoise classification
+                if (name === 'Greynoise' && key === 'classification') {
+                  const classColors = {
+                    'malicious': 'text-red-400 font-bold',
+                    'benign': 'text-green-400 font-bold',
+                    'unknown': 'text-slate-400'
+                  };
+                  displayClass = classColors[value] || 'text-slate-200';
+                  displayValue = String(value).toUpperCase();
+                }
+                
+                // VirusTotal malicious count
+                if (name === 'Virustotal' && key === 'malicious' && value > 0) {
+                  displayClass = 'text-red-400 font-bold';
+                }
+                
+                // AbuseIPDB confidence score
+                if (name === 'Abuseipdb' && key === 'abuse_confidence_score') {
+                  if (value > 75) displayClass = 'text-red-400 font-bold';
+                  else if (value > 25) displayClass = 'text-yellow-400 font-bold';
+                  else displayClass = 'text-green-400';
+                  displayValue = `${value}%`;
+                }
+                
                 return (
-                  <div key={key} className="flex justify-between">
-                    <span className="text-slate-400 capitalize">{key.replace(/_/g, ' ')}:</span>
-                    <span className={`font-medium ${classColors[value] || 'text-slate-200'}`}>
-                      {String(value).toUpperCase()}
+                  <div key={key} className="flex justify-between items-start">
+                    <span className="text-slate-400 capitalize text-xs">{key.replace(/_/g, ' ')}:</span>
+                    <span className={`font-medium break-all max-w-[180px] text-right text-xs ${displayClass}`}>
+                      {typeof displayValue === 'object' ? JSON.stringify(displayValue) : String(displayValue)}
                     </span>
                   </div>
                 );
-              }
-              
-              return (
-                <div key={key} className="flex justify-between">
-                  <span className="text-slate-400 capitalize">{key.replace(/_/g, ' ')}:</span>
-                  <span className="text-slate-200 font-medium break-all max-w-[200px]">
-                    {typeof value === 'object' ? JSON.stringify(value) : String(value)}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
+              })}
+            </div>
+            
+            {referralUrl && (
+              <a 
+                href={referralUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center justify-center space-x-1 mt-3 px-3 py-1.5 bg-cyan-600/20 hover:bg-cyan-600/30 border border-cyan-600/50 rounded text-xs text-cyan-400 hover:text-cyan-300 transition-all"
+              >
+                <span>Full Report</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            )}
+          </>
         ) : (
-          <p className="text-sm text-red-400">{error || 'No data available'}</p>
-        )}
-        
-        {referralUrl && (
-          <a 
-            href={referralUrl} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="mt-3 block text-xs text-cyan-400 hover:text-cyan-300"
-          >
-            View full report on {name} →
-          </a>
+          <div className="text-sm">
+            <p className="text-red-400 mb-2">{error || 'No data available'}</p>
+            {referralUrl && (
+              <a 
+                href={referralUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-xs text-cyan-400 hover:text-cyan-300"
+              >
+                Check manually on {name} →
+              </a>
+            )}
+          </div>
         )}
       </div>
     );
