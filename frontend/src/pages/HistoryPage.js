@@ -114,10 +114,11 @@ const HistoryPage = () => {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h2 className="text-3xl font-bold text-white mb-2">Lookup History</h2>
-          <p className="text-slate-400">View your recent IOC investigations</p>
+          <p className="text-slate-400">View your recent IOC investigations (Max 150 entries)</p>
+          <p className="text-xs text-slate-500 mt-1">Total: {total} entries</p>
         </div>
         <button
-          onClick={fetchHistory}
+          onClick={() => fetchHistory(currentPage)}
           data-testid="refresh-history-btn"
           className="flex items-center space-x-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors"
         >
