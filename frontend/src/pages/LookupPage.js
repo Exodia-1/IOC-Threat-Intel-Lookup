@@ -80,13 +80,26 @@ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`;
         </div>
 
         <div className="flex items-center justify-between">
-          <button
-            onClick={loadExample}
-            data-testid="load-example-btn"
-            className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors"
-          >
-            Load Example IOCs
-          </button>
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={loadExample}
+              data-testid="load-example-btn"
+              className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors"
+            >
+              Load Example IOCs
+            </button>
+            
+            {inputText && (
+              <button
+                onClick={handleClear}
+                data-testid="clear-btn"
+                className="flex items-center space-x-1 text-sm text-slate-400 hover:text-red-400 transition-colors"
+              >
+                <X className="w-4 h-4" />
+                <span>Clear</span>
+              </button>
+            )}
+          </div>
 
           <button
             onClick={handleLookup}
