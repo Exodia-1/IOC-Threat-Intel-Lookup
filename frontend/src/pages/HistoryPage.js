@@ -11,16 +11,22 @@ const HistoryPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
 
-  const fetchHistory = async () => {
+  const fetchHistory = async (page = 1) => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await axios.get(`${API}/ioc/history?limit=50`);
+      const response = await axios.get(`${API}/ioc/history?page=${page}&per_page=20`);
 
       if (response.data.success) {
         setHistory(response.data.history);
+        setTotalPages(response.data.total_pages);
+        setTotal(response.data.total);
+        setCurrentPage(page);
       } else {
         setError('Failed to load history');
       }
@@ -32,7 +38,7 @@ const HistoryPage = () => {
   };
 
   useEffect(() => {
-    fetchHistory();
+    fetchHistory(currentPage);
   }, []);
 
   const getTypeColor = (type) => {
