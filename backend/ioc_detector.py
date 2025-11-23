@@ -106,12 +106,17 @@ class IOCDetector:
                 if not part or len(part) < 3:
                     continue
                 
+                # Defang the IOC first
+                original_part = part
+                part = IOCDetector.defang_ioc(part)
+                
                 ioc_type = IOCDetector.detect_ioc_type(part)
                 
                 if ioc_type != 'unknown' and part not in seen:
                     iocs.append({
                         'value': part,
-                        'type': ioc_type
+                        'type': ioc_type,
+                        'was_fanged': original_part != part
                     })
                     seen.add(part)
         
