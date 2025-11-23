@@ -130,34 +130,15 @@ const FileAnalysisPage = () => {
         <p className="text-slate-400">Upload files for analysis or check file hashes against threat intelligence</p>
       </div>
 
-      {/* Tabs */}
-      <div className="flex space-x-2 mb-6">
-        <button
-          onClick={() => setActiveTab('upload')}
-          data-testid="tab-upload"
-          className={`px-6 py-3 rounded-lg font-medium transition-colors ${
-            activeTab === 'upload'
-              ? 'bg-cyan-600 text-white'
-              : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-          }`}
-        >
-          Upload File
-        </button>
-        <button
-          onClick={() => setActiveTab('hash')}
-          data-testid="tab-hash"
-          className={`px-6 py-3 rounded-lg font-medium transition-colors ${
-            activeTab === 'hash'
-              ? 'bg-cyan-600 text-white'
-              : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-          }`}
-        >
-          Check Hash
-        </button>
+      {/* File Upload Section */}
+      <div className="mb-4">
+        <p className="text-sm text-slate-400 bg-cyan-900/20 border border-cyan-600/30 rounded-lg p-3">
+          💡 <strong>Tip:</strong> To check file hashes against threat intelligence, use the <strong>IOC Lookup</strong> page
+        </p>
       </div>
 
-      {/* Upload Tab */}
-      {activeTab === 'upload' && (
+      {/* Upload Form */}
+      <div className="bg-slate-900 rounded-lg border border-slate-800 p-6 mb-6">(
         <div className="bg-slate-900 rounded-lg border border-slate-800 p-6 mb-6">
           <div className="mb-6">
             <label className="block text-sm font-medium text-slate-300 mb-3">
