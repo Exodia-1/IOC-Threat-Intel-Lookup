@@ -115,6 +115,17 @@ class VirusTotalService(ThreatIntelService):
                 undetected = stats.get('undetected', 0)
                 total_scans = malicious + suspicious + harmless + undetected
                 
+                # Get detailed analysis results
+                last_analysis_results = attributes.get('last_analysis_results', {})
+                detections = []
+                for engine, result in list(last_analysis_results.items())[:10]:
+                    if result.get('category') in ['malicious', 'suspicious']:
+                        detections.append({
+                            'engine': engine,
+                            'category': result.get('category', 'unknown'),
+                            'result': result.get('result', 'flagged')
+                        })
+                
                 return {
                     'success': True,
                     'data': {
@@ -125,7 +136,14 @@ class VirusTotalService(ThreatIntelService):
                         'total_scans': total_scans,
                         'detection_ratio': f"{malicious + suspicious}/{total_scans}",
                         'reputation': attributes.get('reputation', 0),
-                        'categories': attributes.get('categories', {})
+                        'categories': attributes.get('categories', {}),
+                        'creation_date': attributes.get('creation_date', 0),
+                        'last_update_date': attributes.get('last_update_date', 0),
+                        'last_analysis_date': attributes.get('last_analysis_date', 0),
+                        'registrar': attributes.get('registrar', 'Unknown'),
+                        'detections': detections,
+                        'tags': attributes.get('tags', []),
+                        'popularity_ranks': attributes.get('popularity_ranks', {})
                     }
                 }
             else:
