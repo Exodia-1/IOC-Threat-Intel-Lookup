@@ -2,10 +2,9 @@ import { useState } from 'react';
 import '@/App.css';
 import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
 import LookupPage from './pages/LookupPage';
-import HistoryPage from './pages/HistoryPage';
 import EmailAnalysisPage from './pages/EmailAnalysisPage';
 import FileAnalysisPage from './pages/FileAnalysisPage';
-import { Shield, Search, History, Activity, Mail, FileText } from 'lucide-react';
+import { Shield, Search, Mail, FileText } from 'lucide-react';
 
 const Navigation = () => {
   const location = useLocation();
