@@ -536,6 +536,63 @@ class WHOISService(ThreatIntelService):
             return self.handle_request_error('WHOIS', e)
 
 
+class URLAnalysisService(ThreatIntelService):
+    """URL analysis for redirects and embedded URLs"""
+    
+    def analyze_url(self, url: str) -> Dict:
+        """Analyze URL for redirects and extract embedded URLs"""
+        try:
+            import re
+            from urllib.parse import urlparse, urljoin
+            
+            # Follow redirects
+            response = requests.get(
+                url,
+                allow_redirects=True,
+                timeout=10,
+                headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+            )
+            
+            # Check if there were redirects
+            redirect_chain = []
+            if response.history:
+                for resp in response.history:
+                    redirect_chain.append({
+                        'url': resp.url,
+                        'status_code': resp.status_code
+                    })
+            
+            # Extract URLs from page content
+            url_pattern = r'https?://[^\s<>"{}|\\^`\[\]]+[^\s<>"{}|\\^`\[\].,;!?]'
+            extracted_urls = list(set(re.findall(url_pattern, response.text)))
+            
+            # Filter out common CDN/resources
+            filtered_urls = [
+                u for u in extracted_urls 
+                if not any(x in u.lower() for x in [
+                    'google-analytics', 'googleapis', 'facebook.com/tr', 
+                    'doubleclick', 'jquery', 'bootstrap', 'cloudflare',
+                    '.css', '.js', '.png', '.jpg', '.gif', '.woff'
+                ])
+            ][:20]  # Limit to top 20 URLs
+            
+            return {
+                'success': True,
+                'data': {
+                    'final_url': response.url,
+                    'has_redirects': len(redirect_chain) > 0,
+                    'redirect_count': len(redirect_chain),
+                    'redirect_chain': redirect_chain,
+                    'extracted_urls_count': len(filtered_urls),
+                    'extracted_urls': filtered_urls,
+                    'status_code': response.status_code
+                }
+            }
+        
+        except Exception as e:
+            return self.handle_request_error('URLAnalysis', e)
+
+
 class ThreatIntelAggregator:
     """Aggregate results from multiple threat intelligence sources"""
     
@@ -546,6 +603,7 @@ class ThreatIntelAggregator:
         self.otx = OTXService()
         self.greynoise = GreyNoiseService()
         self.whois_service = WHOISService()
+        self.url_analyzer = URLAnalysisService()
     
     async def lookup(self, ioc_value: str, ioc_type: str) -> Dict:
         """Lookup IOC across all applicable sources"""
