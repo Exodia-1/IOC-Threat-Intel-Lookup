@@ -688,6 +688,7 @@ class ThreatIntelAggregator:
         self.greynoise = GreyNoiseService()
         self.whois_service = WHOISService()
         self.url_analyzer = URLAnalysisService()
+        self.mxtoolbox = MXToolboxService()
     
     async def lookup(self, ioc_value: str, ioc_type: str) -> Dict:
         """Lookup IOC across all applicable sources"""
