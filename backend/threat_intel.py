@@ -575,16 +575,6 @@ class ThreatIntelAggregator:
             results['sources']['virustotal'] = self.vt.lookup_url(ioc_value)
             results['sources']['urlscan'] = self.urlscan.lookup_url(ioc_value)
             results['sources']['otx'] = self.otx.lookup_url(ioc_value)
-            # Screenshot with proper error handling
-            try:
-                results['sources']['screenshot'] = await self.screenshot.capture_screenshot(ioc_value)
-            except Exception as e:
-                logger.error(f"Screenshot capture failed for {ioc_value}: {str(e)}")
-                results['sources']['screenshot'] = {
-                    'success': False,
-                    'error': f'Screenshot failed: {str(e)[:100]}',
-                    'data': None
-                }
         
         elif ioc_type in ['md5', 'sha1', 'sha256']:
             results['sources']['virustotal'] = self.vt.lookup_hash(ioc_value)
