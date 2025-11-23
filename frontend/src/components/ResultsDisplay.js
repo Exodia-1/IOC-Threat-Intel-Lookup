@@ -229,38 +229,12 @@ const ResultsDisplay = ({ results }) => {
             {/* VirusTotal - Clean Gauge Display (matching AbuseIPDB style) */}
             {name === 'Virustotal' && (
               <div className="flex flex-col items-center mb-4">
-                <div className="text-center">
-                  <div className="relative inline-flex items-center justify-center w-24 h-24">
-                    <svg className="w-24 h-24 transform -rotate-90">
-                      <circle
-                        cx="48"
-                        cy="48"
-                        r="40"
-                        stroke="currentColor"
-                        strokeWidth="8"
-                        fill="none"
-                        className="text-slate-700"
-                      />
-                      <circle
-                        cx="48"
-                        cy="48"
-                        r="40"
-                        stroke="currentColor"
-                        strokeWidth="8"
-                        fill="none"
-                        strokeDasharray={`${2 * Math.PI * 40}`}
-                        strokeDashoffset={`${2 * Math.PI * 40 * (1 - ((data.malicious + data.suspicious) / (data.total_scans || 1)))}`}
-                        className="text-red-500"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                    <div className="absolute text-center">
-                      <div className="text-2xl font-bold text-red-400">{data.malicious + data.suspicious}</div>
-                      <div className="text-xs text-slate-400">/ {data.total_scans || 0}</div>
-                    </div>
-                  </div>
-                  <p className="text-xs text-slate-400 mt-2">Vendors Flagged</p>
-                </div>
+                <ScoreGauge 
+                  score={data.malicious + data.suspicious}
+                  maxScore={data.total_scans || 1}
+                  label="Vendors Flagged"
+                  thresholds={{ high: Math.floor((data.total_scans || 1) * 0.3), medium: 1 }}
+                />
                 <div className="w-full mt-4 space-y-2 text-xs">
                   <div className="flex justify-between">
                     <span className="text-slate-400">Detections:</span>
