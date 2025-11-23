@@ -547,12 +547,26 @@ class ScreenshotService(ThreatIntelService):
         try:
             async with async_playwright() as p:
                 browser = await p.chromium.launch(
-                    args=['--no-sandbox', '--disable-setuid-sandbox']
+                    headless=True,
+                    args=[
+                        '--no-sandbox',
+                        '--disable-setuid-sandbox',
+                        '--disable-dev-shm-usage',
+                        '--disable-gpu'
+                    ]
                 )
-                page = await browser.new_page(viewport={'width': 1280, 'height': 720})
+                context = await browser.new_context(
+                    viewport={'width': 1280, 'height': 720},
+                    user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                )
+                page = await context.new_page()
                 
-                # Set timeout and navigate
-                await page.goto(url, timeout=15000, wait_until='networkidle')
+                # Navigate with timeout
+                try:
+                    await page.goto(url, timeout=15000, wait_until='domcontentloaded')
+                    await page.wait_for_timeout(2000)  # Wait for page to render
+                except Exception as nav_error:
+                    logger.warning(f"Navigation warning for {url}: {nav_error}")
                 
                 # Take screenshot
                 screenshot_bytes = await page.screenshot(type='png', full_page=False)
@@ -566,11 +580,13 @@ class ScreenshotService(ThreatIntelService):
                     'success': True,
                     'data': {
                         'screenshot': f'data:image/png;base64,{screenshot_base64}',
-                        'message': 'Screenshot captured successfully'
+                        'message': 'Screenshot captured successfully',
+                        'url': url
                     }
                 }
         
         except Exception as e:
+            logger.error(f"Screenshot capture failed: {str(e)}")
             return self.handle_request_error('Screenshot', e)
 
 
