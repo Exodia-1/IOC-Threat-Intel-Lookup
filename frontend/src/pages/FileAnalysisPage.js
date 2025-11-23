@@ -49,26 +49,10 @@ const FileAnalysisPage = () => {
         // Check for suspicious indicators locally
         const suspicious = checkSuspiciousIndicators(file, bytes);
 
-        // Check hash with threat intelligence
-        let threatIntel = null;
-        try {
-          const hashResponse = await axios.post(`${API}/file/check-hash`, {
-            hash: hashes.sha256,
-            hash_type: 'sha256'
-          });
-          
-          if (hashResponse.data.success) {
-            threatIntel = hashResponse.data.data;
-          }
-        } catch (err) {
-          console.error('Threat intel check failed:', err);
-        }
-
         setResults({
           hashes,
           metadata,
           suspicious,
-          threatIntel,
           risk_score: suspicious.length * 15
         });
         
