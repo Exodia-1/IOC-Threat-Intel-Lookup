@@ -48,7 +48,27 @@ const ResultsDisplay = ({ results }) => {
     return { level: 'low', text: 'Low Risk', color: 'text-green-400' };
   };
 
-  const SourceCard = ({ name, data, success, error }) => {
+  const getSourceUrl = (sourceName, iocValue, iocType) => {
+    const urls = {
+      'Virustotal': iocType === 'ipv4' ? `https://www.virustotal.com/gui/ip-address/${iocValue}` :
+                    iocType === 'domain' ? `https://www.virustotal.com/gui/domain/${iocValue}` :
+                    iocType === 'url' ? `https://www.virustotal.com/gui/url/${btoa(iocValue).replace(/=/g, '')}` :
+                    `https://www.virustotal.com/gui/file/${iocValue}`,
+      'Abuseipdb': `https://www.abuseipdb.com/check/${iocValue}`,
+      'Greynoise': `https://www.greynoise.io/viz/ip/${iocValue}`,
+      'Urlscan': `https://urlscan.io/search/#${iocValue}`,
+      'Otx': iocType === 'ipv4' ? `https://otx.alienvault.com/indicator/ip/${iocValue}` :
+             iocType === 'domain' ? `https://otx.alienvault.com/indicator/domain/${iocValue}` :
+             `https://otx.alienvault.com/indicator/file/${iocValue}`,
+      'Whois': iocType === 'domain' ? `https://www.whois.com/whois/${iocValue}` :
+               `https://www.whois.com/whois/${iocValue}`
+    };
+    return urls[sourceName] || null;
+  };
+
+  const SourceCard = ({ name, data, success, error, iocValue, iocType }) => {
+    const referralUrl = getSourceUrl(name, iocValue, iocType);
+    
     // Special handling for screenshot
     if (name === 'Screenshot' && success && data?.screenshot) {
       return (
