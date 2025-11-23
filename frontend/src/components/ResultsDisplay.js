@@ -252,16 +252,59 @@ const ResultsDisplay = ({ results }) => {
                       </span>
                     </div>
                   )}
-                  {data.country && (
+                  {data.country && data.country !== 'Unknown' && (
                     <div className="flex justify-between">
                       <span className="text-slate-400">Country:</span>
                       <span className="text-white font-semibold">{data.country}</span>
+                    </div>
+                  )}
+                  {data.continent && data.continent !== 'Unknown' && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Continent:</span>
+                      <span className="text-white font-semibold">{data.continent}</span>
                     </div>
                   )}
                   {data.as_owner && data.as_owner !== 'Unknown' && (
                     <div className="flex justify-between">
                       <span className="text-slate-400">AS Owner:</span>
                       <span className="text-white font-semibold text-right max-w-[180px] truncate">{data.as_owner}</span>
+                    </div>
+                  )}
+                  {data.network && data.network !== 'Unknown' && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Network:</span>
+                      <span className="text-white font-mono text-xs">{data.network}</span>
+                    </div>
+                  )}
+                  {data.registrar && data.registrar !== 'Unknown' && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Registrar:</span>
+                      <span className="text-white font-semibold text-right max-w-[180px] truncate">{data.registrar}</span>
+                    </div>
+                  )}
+                  {data.tags && data.tags.length > 0 && (
+                    <div className="pt-2 border-t border-slate-700">
+                      <span className="text-slate-400 text-xs">Tags:</span>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {data.tags.slice(0, 5).map((tag, idx) => (
+                          <span key={idx} className="px-1.5 py-0.5 bg-purple-900/30 text-purple-300 rounded text-xs">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {data.detections && data.detections.length > 0 && (
+                    <div className="pt-2 border-t border-slate-700">
+                      <span className="text-slate-400 text-xs mb-1 block">Top Detections:</span>
+                      <div className="max-h-24 overflow-y-auto space-y-1">
+                        {data.detections.map((det, idx) => (
+                          <div key={idx} className="text-xs bg-red-900/20 p-1 rounded">
+                            <span className="text-red-400 font-medium">{det.engine}:</span>
+                            <span className="text-slate-300 ml-1">{det.result}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
