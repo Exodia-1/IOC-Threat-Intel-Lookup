@@ -125,24 +125,44 @@ const ResultsDisplay = ({ results }) => {
     return urls[sourceName] || null;
   };
 
+  const getSourceIcon = (name) => {
+    const icons = {
+      'Virustotal': Shield,
+      'Abuseipdb': AlertTriangle,
+      'Greynoise': Activity,
+      'Urlscan': ExternalLink,
+      'Otx': Info,
+      'Whois': Info
+    };
+    return icons[name] || Info;
+  };
+
   const SourceCard = ({ name, data, success, error, iocValue, iocType }) => {
     const referralUrl = getSourceUrl(name, iocValue, iocType);
+    const SourceIcon = getSourceIcon(name);
     
     // Special handling for screenshot
     if (name === 'Screenshot' && success && data?.screenshot) {
       return (
         <div className="bg-slate-950 rounded-lg p-4 border border-slate-800 col-span-2">
           <div className="flex items-center justify-between mb-3">
-            <h4 className="font-semibold text-white">Screenshot</h4>
+            <div className="flex items-center space-x-2">
+              <ExternalLink className="w-4 h-4 text-cyan-400" />
+              <h4 className="font-semibold text-white">Visual Screenshot</h4>
+            </div>
             <CheckCircle className="w-5 h-5 text-green-400" />
           </div>
-          <div className="mt-3">
+          <div className="bg-white/5 p-2 rounded-lg mb-2">
+            <p className="text-xs text-slate-400 mb-2">🎯 Use this to identify phishing pages by visual inspection</p>
             <img 
               src={data.screenshot} 
               alt="URL Screenshot" 
               className="w-full rounded-lg border border-slate-700"
             />
-            <p className="text-xs text-slate-400 mt-2">{data.message}</p>
+          </div>
+          <div className="flex items-center justify-between mt-3">
+            <p className="text-xs text-green-400">{data.message}</p>
+            <span className="text-xs text-slate-500">Captured: {new Date().toLocaleTimeString()}</span>
           </div>
         </div>
       );
