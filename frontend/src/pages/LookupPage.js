@@ -137,7 +137,6 @@ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`;
               <li>• urlscan.io - Scanning</li>
               <li>• AlienVault OTX - Intel</li>
               <li>• WHOIS - Registration</li>
-              <li>• Screenshot - Visual</li>
             </ul>
           </div>
           <div className="bg-slate-950 p-4 rounded-lg">
