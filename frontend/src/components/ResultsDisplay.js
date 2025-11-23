@@ -208,6 +208,8 @@ const ResultsDisplay = ({ results }) => {
                   data={sourceData.data}
                   success={sourceData.success}
                   error={sourceData.error}
+                  iocValue={iocResult.ioc}
+                  iocType={iocResult.type}
                 />
               ))}
             </div>
