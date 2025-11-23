@@ -175,7 +175,7 @@ const ResultsDisplay = ({ results }) => {
                 <Activity className="w-4 h-4 text-cyan-400" />
                 <h5 className="font-semibold text-white">Quick Summary</h5>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
                 {iocResult.sources?.virustotal?.data && (
                   <div>
                     <span className="text-slate-400">VT Malicious:</span>
@@ -189,6 +189,18 @@ const ResultsDisplay = ({ results }) => {
                     <span className="text-slate-400">Abuse Score:</span>
                     <span className="ml-2 text-yellow-400 font-medium">
                       {iocResult.sources.abuseipdb.data.abuse_confidence_score || 0}%
+                    </span>
+                  </div>
+                )}
+                {iocResult.sources?.greynoise?.data && (
+                  <div>
+                    <span className="text-slate-400">GreyNoise:</span>
+                    <span className={`ml-2 font-medium ${
+                      iocResult.sources.greynoise.data.classification === 'malicious' ? 'text-red-400' :
+                      iocResult.sources.greynoise.data.classification === 'benign' ? 'text-green-400' :
+                      'text-slate-400'
+                    }`}>
+                      {iocResult.sources.greynoise.data.classification || 'unknown'}
                     </span>
                   </div>
                 )}
