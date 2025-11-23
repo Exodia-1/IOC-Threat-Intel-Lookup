@@ -461,18 +461,12 @@ const ResultsDisplay = ({ results }) => {
                 <div className="flex-1">
                   <h4 className={`font-semibold ${threat.color} mb-2`}>Threat Assessment</h4>
                   {threat.details.length > 0 && (
-                    <div className="mb-3 space-y-1">
+                    <div className="space-y-1">
                       {threat.details.map((detail, i) => (
                         <p key={i} className="text-sm text-slate-300">• {detail}</p>
                       ))}
                     </div>
                   )}
-                  <div className="mt-3 pt-3 border-t border-slate-700">
-                    <p className="text-xs font-semibold text-slate-400 mb-2">RECOMMENDED ACTIONS:</p>
-                    {threat.recommendations.map((rec, i) => (
-                      <p key={i} className="text-sm text-slate-300 mb-1">{rec}</p>
-                    ))}
-                  </div>
                 </div>
               </div>
             </div>
