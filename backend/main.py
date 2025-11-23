@@ -30,6 +30,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Root endpoint
+@app.get("/")
+async def root():
+    return {
+        "message": "CTI IOC Lookup Tool API",
+        "status": "running",
+        "version": "1.0.0",
+        "docs": "/api/docs",
+        "health": "/health"
+    }
+
 # Include API routes
 app.include_router(api_router)
 
