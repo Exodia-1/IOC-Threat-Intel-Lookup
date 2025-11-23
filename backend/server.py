@@ -238,6 +238,41 @@ async def analyze_email_headers(request: EmailHeaderRequest):
         logger.error(f"Email header analysis error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# File Analysis Endpoints
+@api_router.post("/file/upload")
+async def upload_file(file: bytes = None):
+    """Upload and analyze file"""
+    try:
+        from fastapi import File, UploadFile
+        
+        result = FileAnalyzer.analyze_file(None, file)
+        return result
+    
+    except Exception as e:
+        logger.error(f"File analysis error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+class FileHashRequest(BaseModel):
+    hash: str
+    hash_type: str  # md5, sha1, sha256
+
+@api_router.post("/file/check-hash")
+async def check_file_hash(request: FileHashRequest):
+    """Check file hash against threat intelligence"""
+    try:
+        # Use existing IOC lookup for hash
+        aggregator = ThreatIntelAggregator()
+        result = await aggregator.lookup(request.hash, request.hash_type)
+        
+        return {
+            'success': True,
+            'data': result
+        }
+    
+    except Exception as e:
+        logger.error(f"Hash check error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Include the router in the main app
 app.include_router(api_router)
 
