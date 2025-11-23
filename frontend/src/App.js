@@ -1,50 +1,70 @@
-import { useEffect } from "react";
-import "@/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
+import { useState } from 'react';
+import '@/App.css';
+import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
+import LookupPage from './pages/LookupPage';
+import HistoryPage from './pages/HistoryPage';
+import { Shield, Search, History, Activity } from 'lucide-react';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
-
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
-    }
+const Navigation = () => {
+  const location = useLocation();
+  
+  const isActive = (path) => {
+    return location.pathname === path;
   };
-
-  useEffect(() => {
-    helloWorldApi();
-  }, []);
-
+  
   return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
+    <nav className="bg-slate-900 border-b border-slate-800">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          <div className="flex items-center space-x-2">
+            <Shield className="w-8 h-8 text-cyan-400" />
+            <div>
+              <h1 className="text-xl font-bold text-white">IOC Threat Intel Lookup</h1>
+              <p className="text-xs text-slate-400">Multi-Source Investigation Tool</p>
+            </div>
+          </div>
+          
+          <div className="flex space-x-4">
+            <Link
+              to="/"
+              data-testid="nav-lookup"
+              className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+                isActive('/') 
+                  ? 'bg-cyan-600 text-white' 
+                  : 'text-slate-300 hover:bg-slate-800'
+              }`}
+            >
+              <Search className="w-4 h-4" />
+              <span>Lookup</span>
+            </Link>
+            
+            <Link
+              to="/history"
+              data-testid="nav-history"
+              className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+                isActive('/history') 
+                  ? 'bg-cyan-600 text-white' 
+                  : 'text-slate-300 hover:bg-slate-800'
+              }`}
+            >
+              <History className="w-4 h-4" />
+              <span>History</span>
+            </Link>
+          </div>
+        </div>
+      </div>
+    </nav>
   );
 };
 
 function App() {
   return (
-    <div className="App">
+    <div className="min-h-screen bg-slate-950">
       <BrowserRouter>
+        <Navigation />
         <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
+          <Route path="/" element={<LookupPage />} />
+          <Route path="/history" element={<HistoryPage />} />
         </Routes>
       </BrowserRouter>
     </div>
