@@ -92,7 +92,20 @@ const ResultsDisplay = ({ results }) => {
     return (
       <div className="bg-slate-950 rounded-lg p-4 border border-slate-800">
         <div className="flex items-center justify-between mb-3">
-          <h4 className="font-semibold text-white">{name}</h4>
+          <div className="flex items-center space-x-2">
+            <h4 className="font-semibold text-white">{name}</h4>
+            {referralUrl && (
+              <a 
+                href={referralUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-cyan-400 hover:text-cyan-300 text-xs"
+                title={`View on ${name}`}
+              >
+                ↗
+              </a>
+            )}
+          </div>
           {success ? (
             <CheckCircle className="w-5 h-5 text-green-400" />
           ) : (
@@ -106,7 +119,6 @@ const ResultsDisplay = ({ results }) => {
               if (value === null || value === undefined || key === 'screenshot') return null;
               
               // Special formatting for GreyNoise classification
-              let displayValue = value;
               if (name === 'Greynoise' && key === 'classification') {
                 const classColors = {
                   'malicious': 'text-red-400',
@@ -126,7 +138,7 @@ const ResultsDisplay = ({ results }) => {
               return (
                 <div key={key} className="flex justify-between">
                   <span className="text-slate-400 capitalize">{key.replace(/_/g, ' ')}:</span>
-                  <span className="text-slate-200 font-medium break-all">
+                  <span className="text-slate-200 font-medium break-all max-w-[200px]">
                     {typeof value === 'object' ? JSON.stringify(value) : String(value)}
                   </span>
                 </div>
@@ -135,6 +147,17 @@ const ResultsDisplay = ({ results }) => {
           </div>
         ) : (
           <p className="text-sm text-red-400">{error || 'No data available'}</p>
+        )}
+        
+        {referralUrl && (
+          <a 
+            href={referralUrl} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="mt-3 block text-xs text-cyan-400 hover:text-cyan-300"
+          >
+            View full report on {name} →
+          </a>
         )}
       </div>
     );
