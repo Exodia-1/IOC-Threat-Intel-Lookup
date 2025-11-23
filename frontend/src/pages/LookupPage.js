@@ -54,7 +54,7 @@ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`;
       {/* Header */}
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-white mb-2">IOC Threat Intelligence Lookup</h2>
-        <p className="text-slate-400">Paste IOCs below to check across 7 threat intelligence sources: VirusTotal, AbuseIPDB, GreyNoise, urlscan.io, AlienVault OTX, WHOIS, and Screenshot</p>
+        <p className="text-slate-400">Paste IOCs below to check across 6 threat intelligence sources: VirusTotal, AbuseIPDB, GreyNoise, urlscan.io, AlienVault OTX, and WHOIS</p>
       </div>
 
       {/* Input Section */}
