@@ -50,7 +50,20 @@ const Navigation = () => {
               }`}
             >
               <Mail className="w-4 h-4" />
-              <span>Email Analysis</span>
+              <span>Email</span>
+            </Link>
+            
+            <Link
+              to="/file"
+              data-testid="nav-file"
+              className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
+                isActive('/file') 
+                  ? 'bg-cyan-600 text-white' 
+                  : 'text-slate-300 hover:bg-slate-800'
+              }`}
+            >
+              <FileText className="w-4 h-4" />
+              <span>File</span>
             </Link>
             
             <Link
