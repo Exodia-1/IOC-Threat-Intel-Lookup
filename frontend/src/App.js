@@ -3,7 +3,8 @@ import '@/App.css';
 import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
 import LookupPage from './pages/LookupPage';
 import HistoryPage from './pages/HistoryPage';
-import { Shield, Search, History, Activity } from 'lucide-react';
+import EmailAnalysisPage from './pages/EmailAnalysisPage';
+import { Shield, Search, History, Activity, Mail } from 'lucide-react';
 
 const Navigation = () => {
   const location = useLocation();
