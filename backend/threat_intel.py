@@ -301,17 +301,33 @@ class AbuseIPDBService(ThreatIntelService):
             if response.status_code == 200:
                 data = response.json().get('data', {})
                 
+                # Extract recent reports
+                reports = data.get('reports', [])
+                recent_reports = []
+                for report in reports[:5]:  # Top 5 recent reports
+                    recent_reports.append({
+                        'reported_at': report.get('reportedAt', 'Unknown'),
+                        'comment': report.get('comment', 'No comment'),
+                        'categories': report.get('categories', []),
+                        'reporter_country': report.get('reporterCountryCode', 'Unknown')
+                    })
+                
                 return {
                     'success': True,
                     'data': {
                         'abuse_confidence_score': data.get('abuseConfidenceScore', 0),
                         'country_code': data.get('countryCode', 'Unknown'),
+                        'country_name': data.get('countryName', 'Unknown'),
                         'usage_type': data.get('usageType', 'Unknown'),
                         'isp': data.get('isp', 'Unknown'),
                         'domain': data.get('domain', 'Unknown'),
+                        'hostnames': data.get('hostnames', []),
                         'is_whitelisted': data.get('isWhitelisted', False),
+                        'is_tor': data.get('isTor', False),
                         'total_reports': data.get('totalReports', 0),
-                        'num_distinct_users': data.get('numDistinctUsers', 0)
+                        'num_distinct_users': data.get('numDistinctUsers', 0),
+                        'last_reported_at': data.get('lastReportedAt', 'Unknown'),
+                        'recent_reports': recent_reports
                     }
                 }
             else:
