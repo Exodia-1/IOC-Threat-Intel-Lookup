@@ -740,8 +740,72 @@ const ResultsDisplay = ({ results }) => {
               </div>
             )}
 
+            {/* WHOIS - Enhanced Display */}
+            {name === 'Whois' && (
+              <div className="mb-4 space-y-2 text-xs">
+                {data.domain_name && (
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Domain:</span>
+                    <span className="text-white font-semibold">{data.domain_name}</span>
+                  </div>
+                )}
+                {data.registrar && data.registrar !== 'Unknown' && (
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Registrar:</span>
+                    <span className="text-white font-medium text-right max-w-[180px] truncate">{data.registrar}</span>
+                  </div>
+                )}
+                {data.creation_date && data.creation_date !== 'Unknown' && (
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Created:</span>
+                    <span className="text-white font-medium">{data.creation_date.split(' ')[0]}</span>
+                  </div>
+                )}
+                {data.expiration_date && data.expiration_date !== 'Unknown' && (
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Expires:</span>
+                    <span className="text-white font-medium">{data.expiration_date.split(' ')[0]}</span>
+                  </div>
+                )}
+                {data.updated_date && data.updated_date !== 'Unknown' && (
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Updated:</span>
+                    <span className="text-white font-medium">{data.updated_date.split(' ')[0]}</span>
+                  </div>
+                )}
+                {data.registrant_organization && data.registrant_organization !== 'Unknown' && (
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Organization:</span>
+                    <span className="text-white font-medium text-right max-w-[180px] truncate">{data.registrant_organization}</span>
+                  </div>
+                )}
+                {data.registrant_country && data.registrant_country !== 'Unknown' && (
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Country:</span>
+                    <span className="text-white font-medium">{data.registrant_country}</span>
+                  </div>
+                )}
+                {data.name_servers && data.name_servers.length > 0 && (
+                  <div className="pt-2 border-t border-slate-700">
+                    <span className="text-slate-400 text-xs mb-1 block">Name Servers:</span>
+                    <div className="space-y-1">
+                      {data.name_servers.map((ns, idx) => (
+                        <div key={idx} className="text-slate-300 font-mono text-xs">{ns}</div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {data.status && data.status !== 'Unknown' && (
+                  <div className="pt-2 border-t border-slate-700">
+                    <span className="text-slate-400 text-xs">Status:</span>
+                    <div className="text-slate-300 text-xs mt-1 break-all">{data.status}</div>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Other Sources - Compact View */}
-            {!['Virustotal', 'Abuseipdb', 'Greynoise', 'Url_analysis', 'Mxtoolbox', 'Ipvoid', 'Urlscan', 'Otx'].includes(name) && (
+            {!['Virustotal', 'Abuseipdb', 'Greynoise', 'Url_analysis', 'Mxtoolbox', 'Ipvoid', 'Urlscan', 'Otx', 'Whois'].includes(name) && (
               <div className="space-y-2 text-sm mb-3">
                 {Object.entries(data).map(([key, value]) => {
                   if (value === null || value === undefined) return null;
