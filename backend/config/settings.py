@@ -6,19 +6,12 @@ ROOT_DIR = Path(__file__).parent.parent
 load_dotenv(ROOT_DIR / '.env')
 
 class Settings:
-    # MongoDB
-    MONGO_URL: str = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
-    DB_NAME: str = os.environ.get('DB_NAME', 'cti_tool')
-    
     # API Keys
     VIRUSTOTAL_API_KEY: str = os.environ.get('VIRUSTOTAL_API_KEY', '')
     ABUSEIPDB_API_KEY: str = os.environ.get('ABUSEIPDB_API_KEY', '')
     URLSCAN_API_KEY: str = os.environ.get('URLSCAN_API_KEY', '')
     OTX_API_KEY: str = os.environ.get('OTX_API_KEY', '')
     GREYNOISE_API_KEY: str = os.environ.get('GREYNOISE_API_KEY', '')
-    
-    # App Settings
-    HISTORY_LIMIT: int = 150
     
     # CORS Origins - can be set via environment variable
     @property
