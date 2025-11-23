@@ -127,7 +127,7 @@ const FileAnalysisPage = () => {
           <FileText className="w-8 h-8 text-cyan-400" />
           <h2 className="text-3xl font-bold text-white">File Analysis</h2>
         </div>
-        <p className="text-slate-400">Upload files for analysis or check file hashes against threat intelligence</p>
+        <p className="text-slate-400">Upload files for metadata analysis and suspicious indicator detection</p>
       </div>
 
       {/* File Upload Section */}
