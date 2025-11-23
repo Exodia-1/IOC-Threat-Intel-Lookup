@@ -497,8 +497,105 @@ const ResultsDisplay = ({ results }) => {
               </div>
             )}
 
+            {/* IPVoid - Special Display */}
+            {name === 'Ipvoid' && (
+              <div className="mb-4">
+                {data.check_url && data.message ? (
+                  <div className="p-3 bg-blue-900/20 rounded-lg border border-blue-500/30">
+                    <p className="text-xs text-slate-300 mb-2">{data.message}</p>
+                    <a 
+                      href={data.check_url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center space-x-1 text-xs text-blue-400 hover:text-blue-300"
+                    >
+                      <span>Check Manually on IPVoid</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
+                ) : (
+                  <>
+                    {/* Detection Ratio */}
+                    {data.detection_ratio && (
+                      <div className="mb-3 p-3 bg-gradient-to-br from-purple-900/20 to-pink-900/20 rounded-lg border-2 border-purple-500/30">
+                        <div className="text-center">
+                          <div className="text-xs text-slate-400 mb-1">Blacklist Detection</div>
+                          <div className="text-3xl font-bold text-purple-400">{data.detection_ratio}</div>
+                          <div className="text-xs text-slate-500 mt-1">Blacklists</div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Risk Score */}
+                    {data.risk_score !== undefined && (
+                      <div className="mb-3">
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-xs text-slate-400">Risk Score</span>
+                          <span className={`text-sm font-bold ${
+                            data.risk_score > 70 ? 'text-red-400' :
+                            data.risk_score > 40 ? 'text-yellow-400' :
+                            'text-green-400'
+                          }`}>{data.risk_score}%</span>
+                        </div>
+                        <div className="w-full bg-slate-800 rounded-full h-2">
+                          <div 
+                            className={`h-2 rounded-full ${
+                              data.risk_score > 70 ? 'bg-red-500' :
+                              data.risk_score > 40 ? 'bg-yellow-500' :
+                              'bg-green-500'
+                            }`}
+                            style={{ width: `${data.risk_score}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Anonymity Check */}
+                    {(data.is_proxy || data.is_vpn || data.is_tor) && (
+                      <div className="mb-3 p-2 bg-yellow-900/20 rounded border border-yellow-500/30">
+                        <div className="text-xs text-yellow-400 font-medium mb-1">Anonymity Detected:</div>
+                        <div className="flex flex-wrap gap-2">
+                          {data.is_proxy && <span className="px-2 py-0.5 bg-yellow-800/30 text-yellow-300 rounded text-xs">Proxy</span>}
+                          {data.is_vpn && <span className="px-2 py-0.5 bg-yellow-800/30 text-yellow-300 rounded text-xs">VPN</span>}
+                          {data.is_tor && <span className="px-2 py-0.5 bg-yellow-800/30 text-yellow-300 rounded text-xs">Tor</span>}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Additional Info */}
+                    <div className="space-y-1 text-xs">
+                      {data.country && (
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Country:</span>
+                          <span className="text-slate-200 font-medium">{data.country}</span>
+                        </div>
+                      )}
+                      {data.isp && (
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">ISP:</span>
+                          <span className="text-slate-200 font-medium">{data.isp}</span>
+                        </div>
+                      )}
+                      {data.server_ip && (
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Server IP:</span>
+                          <span className="text-slate-200 font-mono text-xs">{data.server_ip}</span>
+                        </div>
+                      )}
+                      {data.domain_age !== undefined && data.domain_age > 0 && (
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Domain Age:</span>
+                          <span className="text-slate-200 font-medium">{data.domain_age} days</span>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+
             {/* Other Sources - Compact View */}
-            {!['Virustotal', 'Abuseipdb', 'Greynoise', 'Url_analysis', 'Mxtoolbox'].includes(name) && (
+            {!['Virustotal', 'Abuseipdb', 'Greynoise', 'Url_analysis', 'Mxtoolbox', 'Ipvoid'].includes(name) && (
               <div className="space-y-2 text-sm mb-3">
                 {Object.entries(data).map(([key, value]) => {
                   if (value === null || value === undefined) return null;
