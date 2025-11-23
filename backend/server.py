@@ -11,6 +11,7 @@ import uuid
 from datetime import datetime, timezone
 from ioc_detector import IOCDetector
 from threat_intel import ThreatIntelAggregator
+from email_analyzer import EmailAnalyzer
 
 
 ROOT_DIR = Path(__file__).parent
