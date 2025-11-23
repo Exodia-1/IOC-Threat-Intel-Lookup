@@ -410,14 +410,33 @@ class OTXService(ThreatIntelService):
             
             if response.status_code == 200:
                 data = response.json()
+                pulse_info = data.get('pulse_info', {})
+                
+                # Get pulse details
+                pulses = pulse_info.get('pulses', [])
+                pulse_details = []
+                for pulse in pulses[:5]:  # Top 5 pulses
+                    pulse_details.append({
+                        'name': pulse.get('name', 'Unknown'),
+                        'created': pulse.get('created', 'Unknown'),
+                        'tags': pulse.get('tags', [])[:3]
+                    })
                 
                 return {
                     'success': True,
                     'data': {
-                        'pulse_count': data.get('pulse_info', {}).get('count', 0),
+                        'pulse_count': pulse_info.get('count', 0),
+                        'pulses': pulse_details,
                         'country': data.get('country_name', 'Unknown'),
+                        'country_code': data.get('country_code', 'Unknown'),
+                        'city': data.get('city', 'Unknown'),
+                        'region': data.get('region', 'Unknown'),
                         'asn': data.get('asn', 'Unknown'),
-                        'reputation': data.get('reputation', 0)
+                        'organization': data.get('organization', 'Unknown'),
+                        'reputation': data.get('reputation', 0),
+                        'continent': data.get('continent_code', 'Unknown'),
+                        'latitude': data.get('latitude', 0),
+                        'longitude': data.get('longitude', 0)
                     }
                 }
             else:
