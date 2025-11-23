@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { Search, Loader2, AlertCircle, CheckCircle, XCircle } from 'lucide-react';
+import { Search, Loader2, AlertCircle, CheckCircle, XCircle, X } from 'lucide-react';
 import ResultsDisplay from '../components/ResultsDisplay';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
