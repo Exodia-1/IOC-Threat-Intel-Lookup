@@ -1,0 +1,30 @@
+import os
+from pathlib import Path
+from dotenv import load_dotenv
+
+ROOT_DIR = Path(__file__).parent.parent
+load_dotenv(ROOT_DIR / '.env')
+
+class Settings:
+    # MongoDB
+    MONGO_URL: str = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
+    DB_NAME: str = os.environ.get('DB_NAME', 'cti_tool')
+    
+    # API Keys
+    VIRUSTOTAL_API_KEY: str = os.environ.get('VIRUSTOTAL_API_KEY', '')
+    ABUSEIPDB_API_KEY: str = os.environ.get('ABUSEIPDB_API_KEY', '')
+    URLSCAN_API_KEY: str = os.environ.get('URLSCAN_API_KEY', '')
+    OTX_API_KEY: str = os.environ.get('OTX_API_KEY', '')
+    GREYNOISE_API_KEY: str = os.environ.get('GREYNOISE_API_KEY', '')
+    
+    # App Settings
+    HISTORY_LIMIT: int = 150
+    CORS_ORIGINS: list = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ]
+    
+    # Logging
+    LOG_LEVEL: str = os.environ.get('LOG_LEVEL', 'INFO')
+
+settings = Settings()
