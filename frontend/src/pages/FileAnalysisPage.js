@@ -176,24 +176,37 @@ const FileAnalysisPage = () => {
             )}
           </div>
 
-          <button
-            onClick={handleFileAnalysis}
-            disabled={loading || !file}
-            data-testid="analyze-file-btn"
-            className="flex items-center space-x-2 px-6 py-3 bg-cyan-600 hover:bg-cyan-700 disabled:bg-slate-700 text-white font-medium rounded-lg transition-colors"
-          >
-            {loading ? (
-              <>
-                <Loader2 className="w-5 h-5 animate-spin" />
-                <span>Analyzing...</span>
-              </>
-            ) : (
-              <>
-                <Shield className="w-5 h-5" />
-                <span>Analyze File</span>
-              </>
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={handleFileAnalysis}
+              disabled={loading || !file}
+              data-testid="analyze-file-btn"
+              className="flex items-center space-x-2 px-6 py-3 bg-cyan-600 hover:bg-cyan-700 disabled:bg-slate-700 text-white font-medium rounded-lg transition-colors"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Analyzing...</span>
+                </>
+              ) : (
+                <>
+                  <Shield className="w-5 h-5" />
+                  <span>Analyze File</span>
+                </>
+              )}
+            </button>
+
+            {file && (
+              <button
+                onClick={handleClear}
+                data-testid="clear-file-btn"
+                className="flex items-center space-x-1 px-4 py-3 text-slate-400 hover:text-red-400 transition-colors"
+              >
+                <X className="w-4 h-4" />
+                <span>Clear</span>
+              </button>
             )}
-          </button>
+          </div>
 
           {/* Upload Results */}
           {results && (
