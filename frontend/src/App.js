@@ -78,6 +78,7 @@ function App() {
         <Navigation />
         <Routes>
           <Route path="/" element={<LookupPage />} />
+          <Route path="/email" element={<EmailAnalysisPage />} />
           <Route path="/history" element={<HistoryPage />} />
         </Routes>
       </BrowserRouter>
