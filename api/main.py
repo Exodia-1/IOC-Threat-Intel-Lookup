@@ -1,3 +1,5 @@
+from fastapi import FastAPI
+from mangum import Mangum
 import sys
 from pathlib import Path
 
@@ -5,7 +7,8 @@ from pathlib import Path
 backend_path = Path(__file__).parent.parent / "backend"
 sys.path.insert(0, str(backend_path))
 
+# Import the FastAPI app
 from main import app
 
-# Vercel serverless handler
-handler = app
+# Wrap with Mangum for serverless
+handler = Mangum(app, lifespan="off")
