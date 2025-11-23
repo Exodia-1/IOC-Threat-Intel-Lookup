@@ -229,6 +229,87 @@ const ResultsDisplay = ({ results }) => {
             {/* VirusTotal Visual Stats */}
             {name === 'Virustotal' && (
               <div className="mb-4">
+                {/* File Information for Hashes */}
+                {iocType && ['md5', 'sha1', 'sha256'].includes(iocType) && (
+                  <div className="mb-4 p-3 bg-slate-900 rounded-lg border border-slate-700">
+                    <h5 className="text-xs font-semibold text-cyan-400 mb-2">File Information</h5>
+                    <div className="space-y-2 text-xs">
+                      {data.file_name && data.file_name !== 'Unknown' && (
+                        <div>
+                          <span className="text-slate-400">Name:</span>
+                          <div className="text-slate-200 font-medium mt-1 break-all">{data.file_name}</div>
+                        </div>
+                      )}
+                      {data.size_readable && (
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Size:</span>
+                          <span className="text-slate-200 font-bold">{data.size_readable}</span>
+                        </div>
+                      )}
+                      {data.file_type && data.file_type !== 'Unknown' && (
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Type:</span>
+                          <span className="text-slate-200 font-medium">{data.file_type}</span>
+                        </div>
+                      )}
+                      {data.file_extension && data.file_extension !== 'Unknown' && (
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Extension:</span>
+                          <span className="text-slate-200 font-medium">.{data.file_extension}</span>
+                        </div>
+                      )}
+                      {data.times_submitted > 0 && (
+                        <div className="flex justify-between">
+                          <span className="text-slate-400">Submissions:</span>
+                          <span className="text-slate-200 font-medium">{data.times_submitted}</span>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* File Hashes */}
+                    {data.sha256 && data.sha256 !== 'N/A' && (
+                      <div className="mt-3 pt-3 border-t border-slate-700">
+                        <h5 className="text-xs font-semibold text-cyan-400 mb-2">Hashes</h5>
+                        <div className="space-y-1">
+                          <div>
+                            <span className="text-slate-500 text-xs">MD5:</span>
+                            <code className="block text-xs text-slate-300 font-mono break-all bg-slate-950 p-1 rounded mt-1">
+                              {data.md5}
+                            </code>
+                          </div>
+                          <div>
+                            <span className="text-slate-500 text-xs">SHA-1:</span>
+                            <code className="block text-xs text-slate-300 font-mono break-all bg-slate-950 p-1 rounded mt-1">
+                              {data.sha1}
+                            </code>
+                          </div>
+                          <div>
+                            <span className="text-slate-500 text-xs">SHA-256:</span>
+                            <code className="block text-xs text-slate-300 font-mono break-all bg-slate-950 p-1 rounded mt-1">
+                              {data.sha256}
+                            </code>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Tags */}
+                    {data.tags && data.tags.length > 0 && (
+                      <div className="mt-3 pt-3 border-t border-slate-700">
+                        <h5 className="text-xs font-semibold text-cyan-400 mb-2">Tags</h5>
+                        <div className="flex flex-wrap gap-1">
+                          {data.tags.map((tag, idx) => (
+                            <span key={idx} className="px-2 py-0.5 bg-slate-800 text-slate-300 rounded text-xs">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                {/* Detection Stats */}
                 <ProgressBar 
                   value={data.malicious || 0} 
                   max={100} 
