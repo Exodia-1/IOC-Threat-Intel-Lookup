@@ -619,11 +619,20 @@ class GreyNoiseService(ThreatIntelService):
                 'Accept': 'application/json'
             }
             
+            # Try detailed endpoint first
             response = requests.get(
-                f'{self.base_url}/community/{ip}',
+                f'{self.base_url.replace("/community", "")}/riot/{ip}',
                 headers=headers,
                 timeout=self.timeout
             )
+            
+            # If riot endpoint fails, try community
+            if response.status_code != 200:
+                response = requests.get(
+                    f'{self.base_url}/community/{ip}',
+                    headers=headers,
+                    timeout=self.timeout
+                )
             
             if response.status_code == 200:
                 data = response.json()
@@ -635,7 +644,13 @@ class GreyNoiseService(ThreatIntelService):
                         'noise': data.get('noise', False),
                         'riot': data.get('riot', False),
                         'name': data.get('name', 'Unknown'),
-                        'last_seen': data.get('last_seen', 'Unknown')
+                        'last_seen': data.get('last_seen', 'Unknown'),
+                        'link': data.get('link', ''),
+                        'message': data.get('message', ''),
+                        'ip': data.get('ip', ip),
+                        'category': data.get('category', 'Unknown'),
+                        'trust_level': data.get('trust_level', 'Unknown'),
+                        'explanation': data.get('explanation', '')
                     }
                 }
             else:
