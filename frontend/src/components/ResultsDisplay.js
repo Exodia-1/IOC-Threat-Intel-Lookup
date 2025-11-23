@@ -309,49 +309,87 @@ const ResultsDisplay = ({ results }) => {
                   </div>
                 )}
                 
-                {/* Detection Ratio - Prominent Display */}
-                {data.detection_ratio && (
-                  <div className="mb-4 p-4 bg-gradient-to-br from-red-900/20 to-orange-900/20 rounded-lg border-2 border-red-500/30">
-                    <div className="text-center">
-                      <div className="text-xs text-slate-400 mb-2">Detection Ratio</div>
-                      <div className="text-4xl font-bold text-red-400 mb-1">{data.detection_ratio}</div>
-                      <div className="text-xs text-slate-500">Security Vendors</div>
+                {/* Detection Gauge */}
+                <div className="relative w-32 h-32 mb-4">
+                  {/* Circular Progress */}
+                  <svg className="w-32 h-32 transform -rotate-90">
+                    <circle
+                      cx="64"
+                      cy="64"
+                      r="52"
+                      stroke="currentColor"
+                      strokeWidth="8"
+                      fill="none"
+                      className="text-slate-800"
+                    />
+                    <circle
+                      cx="64"
+                      cy="64"
+                      r="52"
+                      stroke="currentColor"
+                      strokeWidth="8"
+                      fill="none"
+                      strokeDasharray={`${2 * Math.PI * 52}`}
+                      strokeDashoffset={`${2 * Math.PI * 52 * (1 - ((data.malicious + data.suspicious) / (data.total_scans || 1)))}`}
+                      className={`${
+                        (data.malicious + data.suspicious) > (data.total_scans * 0.3) ? 'text-red-500' :
+                        (data.malicious + data.suspicious) > 0 ? 'text-yellow-500' :
+                        'text-green-500'
+                      } transition-all duration-500`}
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  {/* Center Text */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <div className={`text-3xl font-bold ${
+                      (data.malicious + data.suspicious) > (data.total_scans * 0.3) ? 'text-red-400' :
+                      (data.malicious + data.suspicious) > 0 ? 'text-yellow-400' :
+                      'text-green-400'
+                    }`}>
+                      {data.malicious + data.suspicious}
                     </div>
+                    <div className="text-xs text-slate-400">/ {data.total_scans || 0}</div>
                   </div>
-                )}
-                
-                {/* Detection Stats */}
-                <ProgressBar 
-                  value={data.malicious || 0} 
-                  max={data.total_scans || 100} 
-                  color="bg-red-500" 
-                  label="Malicious" 
-                />
-                <ProgressBar 
-                  value={data.suspicious || 0} 
-                  max={data.total_scans || 100} 
-                  color="bg-yellow-500" 
-                  label="Suspicious" 
-                />
-                <ProgressBar 
-                  value={data.harmless || 0} 
-                  max={data.total_scans || 100} 
-                  color="bg-green-500" 
-                  label="Harmless" 
-                />
-                <ProgressBar 
-                  value={data.undetected || 0} 
-                  max={data.total_scans || 100} 
-                  color="bg-slate-600" 
-                  label="Undetected" 
-                />
-                <div className="mt-3 pt-3 border-t border-slate-800">
-                  <div className="flex justify-between text-xs">
-                    <span className="text-slate-400">Reputation:</span>
-                    <span className={`font-bold ${data.reputation > 0 ? 'text-green-400' : 'text-red-400'}`}>
-                      {data.reputation || 0}
-                    </span>
+                </div>
+
+                {/* Detection Ratio Label */}
+                <div className="text-center mb-4">
+                  <div className="text-xs text-slate-400">Vendors Flagged</div>
+                  <div className={`text-xl font-bold ${
+                    (data.malicious + data.suspicious) > (data.total_scans * 0.3) ? 'text-red-400' :
+                    (data.malicious + data.suspicious) > 0 ? 'text-yellow-400' :
+                    'text-green-400'
+                  }`}>
+                    {data.detection_ratio}
                   </div>
+                </div>
+
+                {/* Breakdown Stats */}
+                <div className="w-full space-y-2 text-xs">
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-400">Malicious:</span>
+                    <span className="text-red-400 font-semibold">{data.malicious || 0}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-400">Suspicious:</span>
+                    <span className="text-yellow-400 font-semibold">{data.suspicious || 0}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-400">Harmless:</span>
+                    <span className="text-green-400 font-semibold">{data.harmless || 0}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-400">Undetected:</span>
+                    <span className="text-slate-500 font-semibold">{data.undetected || 0}</span>
+                  </div>
+                  {data.reputation !== undefined && (
+                    <div className="flex justify-between items-center pt-2 border-t border-slate-800">
+                      <span className="text-slate-400">Reputation:</span>
+                      <span className={`font-semibold ${data.reputation > 0 ? 'text-green-400' : data.reputation < 0 ? 'text-red-400' : 'text-slate-400'}`}>
+                        {data.reputation || 0}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
