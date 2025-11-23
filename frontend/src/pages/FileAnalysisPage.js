@@ -6,10 +6,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 const FileAnalysisPage = () => {
-  const [activeTab, setActiveTab] = useState('upload');
   const [file, setFile] = useState(null);
-  const [hashInput, setHashInput] = useState('');
-  const [hashType, setHashType] = useState('sha256');
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState(null);
   const [error, setError] = useState(null);
