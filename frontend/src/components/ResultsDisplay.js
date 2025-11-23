@@ -506,8 +506,50 @@ const ResultsDisplay = ({ results }) => {
               </div>
             )}
 
+            {/* URLScan - Minimal Display */}
+            {name === 'Urlscan' && (
+              <div className="mb-4">
+                <div className="text-center p-4 bg-slate-800 rounded-lg">
+                  <div className="text-xs text-slate-400 mb-1">Recent Scans</div>
+                  <div className="text-2xl font-bold text-cyan-400">
+                    {data.recent_scans || data.total_results || 0}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* OTX - Minimal Display */}
+            {name === 'Otx' && (
+              <div className="mb-4">
+                <div className="text-center p-4 bg-slate-800 rounded-lg">
+                  <div className="text-xs text-slate-400 mb-1">Threat Pulses</div>
+                  <div className="text-2xl font-bold text-blue-400">
+                    {data.pulse_count || 0}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* WHOIS - Compact Display */}
+            {name === 'Whois' && (
+              <div className="space-y-2 text-sm mb-3">
+                {Object.entries(data).slice(0, 4).map(([key, value]) => {
+                  if (value === null || value === undefined || value === 'Unknown') return null;
+                  
+                  return (
+                    <div key={key} className="flex justify-between items-start">
+                      <span className="text-slate-400 capitalize text-xs">{key.replace(/_/g, ' ')}:</span>
+                      <span className="font-medium text-white text-xs max-w-[180px] text-right break-all">
+                        {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
             {/* Other Sources - Compact View */}
-            {!['Virustotal', 'Abuseipdb', 'Greynoise', 'Url_analysis', 'Mxtoolbox', 'Ipvoid'].includes(name) && (
+            {!['Virustotal', 'Abuseipdb', 'Greynoise', 'Url_analysis', 'Mxtoolbox', 'Ipvoid', 'Urlscan', 'Otx', 'Whois'].includes(name) && (
               <div className="space-y-2 text-sm mb-3">
                 {Object.entries(data).map(([key, value]) => {
                   if (value === null || value === undefined) return null;
