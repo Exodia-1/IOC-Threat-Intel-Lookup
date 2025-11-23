@@ -4,11 +4,14 @@ A powerful multi-source IOC (Indicator of Compromise) lookup tool for cybersecur
 
 ## 🎯 Features
 
-- **Multi-Source Intelligence**: Integrates with 4 major threat intelligence platforms
+- **Multi-Source Intelligence**: Integrates with 7 threat intelligence platforms
   - VirusTotal - File/URL/IP/Domain reputation
   - AbuseIPDB - IP abuse reports and confidence scores
+  - GreyNoise - IP classification (benign/malicious/unknown)
   - urlscan.io - URL scanning and screenshots
   - AlienVault OTX - Open threat exchange data
+  - WHOIS - Domain/IP registration information
+  - Screenshot - Visual capture of suspicious websites
 
 - **Bulk Lookup**: Paste multiple IOCs at once (one per line or comma-separated)
 
