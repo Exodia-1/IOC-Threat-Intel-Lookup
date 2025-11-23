@@ -572,13 +572,6 @@ class ScreenshotService(ThreatIntelService):
         
         except Exception as e:
             return self.handle_request_error('Screenshot', e)
-    
-    def capture_screenshot_sync(self, url: str) -> Dict:
-        """Synchronous wrapper for screenshot capture"""
-        try:
-            return asyncio.run(self.capture_screenshot(url))
-        except Exception as e:
-            return self.handle_request_error('Screenshot', e)
 
 
 class ThreatIntelAggregator:
