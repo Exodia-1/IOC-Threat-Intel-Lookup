@@ -182,24 +182,37 @@ const EmailAnalysisPage = () => {
             />
           </div>
 
-          <button
-            onClick={handleDomainCheck}
-            disabled={loading}
-            data-testid="check-domain-btn"
-            className="flex items-center space-x-2 px-6 py-3 bg-cyan-600 hover:bg-cyan-700 disabled:bg-slate-700 text-white font-medium rounded-lg transition-colors"
-          >
-            {loading ? (
-              <>
-                <Loader2 className="w-5 h-5 animate-spin" />
-                <span>Checking...</span>
-              </>
-            ) : (
-              <>
-                <Shield className="w-5 h-5" />
-                <span>Check Domain</span>
-              </>
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={handleDomainCheck}
+              disabled={loading}
+              data-testid="check-domain-btn"
+              className="flex items-center space-x-2 px-6 py-3 bg-cyan-600 hover:bg-cyan-700 disabled:bg-slate-700 text-white font-medium rounded-lg transition-colors"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Checking...</span>
+                </>
+              ) : (
+                <>
+                  <Shield className="w-5 h-5" />
+                  <span>Check Domain</span>
+                </>
+              )}
+            </button>
+
+            {emailInput && (
+              <button
+                onClick={handleClearDomain}
+                data-testid="clear-domain-btn"
+                className="flex items-center space-x-1 px-4 py-3 text-slate-400 hover:text-red-400 transition-colors"
+              >
+                <X className="w-4 h-4" />
+                <span>Clear</span>
+              </button>
             )}
-          </button>
+          </div>
 
           {/* Domain Results */}
           {results && activeTab === 'domain' && (
