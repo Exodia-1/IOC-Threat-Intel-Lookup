@@ -871,6 +871,7 @@ class ThreatIntelAggregator:
             results['sources']['otx'] = self.otx.lookup_ip(ioc_value)
             results['sources']['whois'] = self.whois_service.lookup_ip(ioc_value)
             results['sources']['mxtoolbox'] = self.mxtoolbox.lookup_ip(ioc_value)
+            results['sources']['ipvoid'] = self.ipvoid.lookup_ip(ioc_value)
         
         elif ioc_type == 'domain':
             results['sources']['virustotal'] = self.vt.lookup_domain(ioc_value)
@@ -878,6 +879,7 @@ class ThreatIntelAggregator:
             results['sources']['otx'] = self.otx.lookup_domain(ioc_value)
             results['sources']['whois'] = self.whois_service.lookup_domain(ioc_value)
             results['sources']['mxtoolbox'] = self.mxtoolbox.lookup_domain(ioc_value)
+            results['sources']['ipvoid'] = self.ipvoid.lookup_domain(ioc_value)
         
         elif ioc_type == 'url':
             results['sources']['virustotal'] = self.vt.lookup_url(ioc_value)
