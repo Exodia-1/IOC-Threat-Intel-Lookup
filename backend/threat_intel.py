@@ -138,7 +138,7 @@ class VirusTotalService(ThreatIntelService):
             return self.handle_request_error('VirusTotal', e)
     
     def lookup_hash(self, file_hash: str) -> Dict:
-        """Lookup file hash"""
+        """Lookup file hash with detailed information"""
         if not self.api_key:
             return {'success': False, 'error': 'API key not configured', 'data': None}
         
@@ -155,6 +155,10 @@ class VirusTotalService(ThreatIntelService):
                 attributes = data.get('data', {}).get('attributes', {})
                 stats = attributes.get('last_analysis_stats', {})
                 
+                # Extract file names
+                names = attributes.get('names', [])
+                meaningful_name = attributes.get('meaningful_name', '')
+                
                 return {
                     'success': True,
                     'data': {
@@ -163,7 +167,19 @@ class VirusTotalService(ThreatIntelService):
                         'harmless': stats.get('harmless', 0),
                         'undetected': stats.get('undetected', 0),
                         'file_type': attributes.get('type_description', 'Unknown'),
-                        'file_name': attributes.get('meaningful_name', 'Unknown')
+                        'file_extension': attributes.get('type_extension', 'Unknown'),
+                        'file_name': meaningful_name or (names[0] if names else 'Unknown'),
+                        'file_names': names[:5] if names else [],  # Top 5 names
+                        'size': attributes.get('size', 0),
+                        'size_readable': self._format_file_size(attributes.get('size', 0)),
+                        'md5': attributes.get('md5', 'N/A'),
+                        'sha1': attributes.get('sha1', 'N/A'),
+                        'sha256': attributes.get('sha256', 'N/A'),
+                        'first_submission': attributes.get('first_submission_date', 0),
+                        'last_analysis': attributes.get('last_analysis_date', 0),
+                        'times_submitted': attributes.get('times_submitted', 0),
+                        'reputation': attributes.get('reputation', 0),
+                        'tags': attributes.get('tags', [])[:5]  # Top 5 tags
                     }
                 }
             else:
@@ -171,6 +187,17 @@ class VirusTotalService(ThreatIntelService):
         
         except Exception as e:
             return self.handle_request_error('VirusTotal', e)
+    
+    def _format_file_size(self, size_bytes: int) -> str:
+        """Format file size in human readable format"""
+        if size_bytes < 1024:
+            return f"{size_bytes} B"
+        elif size_bytes < 1024 * 1024:
+            return f"{size_bytes / 1024:.2f} KB"
+        elif size_bytes < 1024 * 1024 * 1024:
+            return f"{size_bytes / (1024 * 1024):.2f} MB"
+        else:
+            return f"{size_bytes / (1024 * 1024 * 1024):.2f} GB"
 
 
 class AbuseIPDBService(ThreatIntelService):
