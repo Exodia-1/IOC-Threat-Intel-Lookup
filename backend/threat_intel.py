@@ -736,6 +736,112 @@ class URLAnalysisService(ThreatIntelService):
             return self.handle_request_error('URLAnalysis', e)
 
 
+class IPVoidService(ThreatIntelService):
+    """IPVoid API integration for IP and domain reputation"""
+    
+    def __init__(self):
+        super().__init__()
+        self.base_url = 'https://endpoint.apivoid.com'
+        # IPVoid has a free tier with limited requests
+        # For better integration, users can add their API key
+        self.api_key = os.environ.get('IPVOID_API_KEY', '')
+    
+    def lookup_ip(self, ip: str) -> Dict:
+        """Check IP reputation using IPVoid"""
+        if not self.api_key:
+            # Provide a direct link to check manually
+            return {
+                'success': True,
+                'data': {
+                    'check_url': f'https://www.ipvoid.com/ip-blacklist-check/',
+                    'message': 'IPVoid API key not configured. Visit the link to check manually.',
+                    'detections': 0,
+                    'blacklists': 0,
+                    'risk_score': 0
+                }
+            }
+        
+        try:
+            response = requests.get(
+                f'{self.base_url}/iprep/v1/pay-as-you-go/',
+                params={'key': self.api_key, 'ip': ip},
+                timeout=self.timeout
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                report = data.get('data', {}).get('report', {})
+                blacklists = report.get('blacklists', {})
+                
+                detections = blacklists.get('detections', 0)
+                engines = blacklists.get('engines', 0)
+                
+                return {
+                    'success': True,
+                    'data': {
+                        'detections': detections,
+                        'total_engines': engines,
+                        'detection_ratio': f"{detections}/{engines}" if engines > 0 else "0/0",
+                        'risk_score': report.get('risk_score', {}).get('result', 0),
+                        'is_proxy': report.get('anonymity', {}).get('is_proxy', False),
+                        'is_vpn': report.get('anonymity', {}).get('is_vpn', False),
+                        'is_tor': report.get('anonymity', {}).get('is_tor', False),
+                        'country': report.get('information', {}).get('country_name', 'Unknown'),
+                        'isp': report.get('information', {}).get('isp', 'Unknown')
+                    }
+                }
+            else:
+                return {'success': False, 'error': f'HTTP {response.status_code}', 'data': None}
+        
+        except Exception as e:
+            return self.handle_request_error('IPVoid', e)
+    
+    def lookup_domain(self, domain: str) -> Dict:
+        """Check domain reputation using IPVoid"""
+        if not self.api_key:
+            return {
+                'success': True,
+                'data': {
+                    'check_url': f'https://www.ipvoid.com/domain-reputation-check/',
+                    'message': 'IPVoid API key not configured. Visit the link to check manually.',
+                    'detections': 0,
+                    'blacklists': 0
+                }
+            }
+        
+        try:
+            response = requests.get(
+                f'{self.base_url}/domainbl/v1/pay-as-you-go/',
+                params={'key': self.api_key, 'host': domain},
+                timeout=self.timeout
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                report = data.get('data', {}).get('report', {})
+                blacklists = report.get('blacklists', {})
+                
+                detections = blacklists.get('detections', 0)
+                engines = blacklists.get('engines', 0)
+                
+                return {
+                    'success': True,
+                    'data': {
+                        'detections': detections,
+                        'total_engines': engines,
+                        'detection_ratio': f"{detections}/{engines}" if engines > 0 else "0/0",
+                        'risk_score': report.get('risk_score', {}).get('result', 0),
+                        'domain_age': report.get('server', {}).get('domain_age_days', 0),
+                        'server_ip': report.get('server', {}).get('ip', 'Unknown')
+                    }
+                }
+            else:
+                return {'success': False, 'error': f'HTTP {response.status_code}', 'data': None}
+        
+        except Exception as e:
+            return self.handle_request_error('IPVoid', e)
+
+
 class ThreatIntelAggregator:
     """Aggregate results from multiple threat intelligence sources"""
     
@@ -748,6 +854,7 @@ class ThreatIntelAggregator:
         self.whois_service = WHOISService()
         self.url_analyzer = URLAnalysisService()
         self.mxtoolbox = MXToolboxService()
+        self.ipvoid = IPVoidService()
     
     async def lookup(self, ioc_value: str, ioc_type: str) -> Dict:
         """Lookup IOC across all applicable sources"""
