@@ -64,19 +64,6 @@ const Navigation = () => {
               <FileText className="w-4 h-4" />
               <span>File</span>
             </Link>
-            
-            <Link
-              to="/history"
-              data-testid="nav-history"
-              className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
-                isActive('/history') 
-                  ? 'bg-cyan-600 text-white' 
-                  : 'text-slate-300 hover:bg-slate-800'
-              }`}
-            >
-              <History className="w-4 h-4" />
-              <span>History</span>
-            </Link>
           </div>
         </div>
       </div>
