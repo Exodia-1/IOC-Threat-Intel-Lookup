@@ -4,7 +4,8 @@ import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-do
 import LookupPage from './pages/LookupPage';
 import HistoryPage from './pages/HistoryPage';
 import EmailAnalysisPage from './pages/EmailAnalysisPage';
-import { Shield, Search, History, Activity, Mail } from 'lucide-react';
+import FileAnalysisPage from './pages/FileAnalysisPage';
+import { Shield, Search, History, Activity, Mail, FileText } from 'lucide-react';
 
 const Navigation = () => {
   const location = useLocation();
