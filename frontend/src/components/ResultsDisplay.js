@@ -329,15 +329,21 @@ const ResultsDisplay = ({ results }) => {
                 />
                 <ProgressBar 
                   value={data.suspicious || 0} 
-                  max={50} 
+                  max={data.total_scans || 100} 
                   color="bg-yellow-500" 
                   label="Suspicious" 
                 />
                 <ProgressBar 
                   value={data.harmless || 0} 
-                  max={100} 
+                  max={data.total_scans || 100} 
                   color="bg-green-500" 
                   label="Harmless" 
+                />
+                <ProgressBar 
+                  value={data.undetected || 0} 
+                  max={data.total_scans || 100} 
+                  color="bg-slate-600" 
+                  label="Undetected" 
                 />
                 <div className="mt-3 pt-3 border-t border-slate-800">
                   <div className="flex justify-between text-xs">
