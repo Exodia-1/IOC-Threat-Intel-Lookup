@@ -506,50 +506,120 @@ const ResultsDisplay = ({ results }) => {
               </div>
             )}
 
-            {/* URLScan - Minimal Display */}
+            {/* URLScan - Enhanced Display */}
             {name === 'Urlscan' && (
-              <div className="mb-4">
-                <div className="text-center p-4 bg-slate-800 rounded-lg">
-                  <div className="text-xs text-slate-400 mb-1">Recent Scans</div>
-                  <div className="text-2xl font-bold text-cyan-400">
-                    {data.recent_scans || data.total_results || 0}
+              <div className="mb-4 space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="text-center p-3 bg-slate-800 rounded-lg">
+                    <div className="text-xs text-slate-400 mb-1">Total Results</div>
+                    <div className="text-xl font-bold text-cyan-400">{data.total_results || 0}</div>
+                  </div>
+                  <div className="text-center p-3 bg-slate-800 rounded-lg">
+                    <div className="text-xs text-slate-400 mb-1">Recent Scans</div>
+                    <div className="text-xl font-bold text-green-400">{data.recent_scans || 0}</div>
                   </div>
                 </div>
+                
+                {data.scan_details && data.scan_details.length > 0 && (
+                  <div className="bg-slate-800 rounded-lg p-3">
+                    <h5 className="text-xs font-semibold text-cyan-400 mb-2">Recent Scan Details</h5>
+                    <div className="space-y-2 max-h-40 overflow-y-auto">
+                      {data.scan_details.map((scan, idx) => (
+                        <div key={idx} className="text-xs border-b border-slate-700 pb-2 last:border-0">
+                          <div className="flex justify-between mb-1">
+                            <span className="text-slate-400">Country:</span>
+                            <span className="text-white font-medium">{scan.country}</span>
+                          </div>
+                          <div className="flex justify-between mb-1">
+                            <span className="text-slate-400">IP:</span>
+                            <span className="text-white font-mono text-xs">{scan.ip}</span>
+                          </div>
+                          {scan.malicious && (
+                            <div className="text-red-400 font-medium">⚠️ Flagged as Malicious</div>
+                          )}
+                          {scan.score > 0 && (
+                            <div className="flex justify-between">
+                              <span className="text-slate-400">Score:</span>
+                              <span className="text-yellow-400 font-medium">{scan.score}</span>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
-            {/* OTX - Minimal Display */}
+            {/* OTX - Enhanced Display */}
             {name === 'Otx' && (
-              <div className="mb-4">
-                <div className="text-center p-4 bg-slate-800 rounded-lg">
+              <div className="mb-4 space-y-3">
+                <div className="text-center p-3 bg-slate-800 rounded-lg">
                   <div className="text-xs text-slate-400 mb-1">Threat Pulses</div>
-                  <div className="text-2xl font-bold text-blue-400">
-                    {data.pulse_count || 0}
-                  </div>
+                  <div className="text-2xl font-bold text-blue-400">{data.pulse_count || 0}</div>
                 </div>
-              </div>
-            )}
-
-            {/* WHOIS - Compact Display */}
-            {name === 'Whois' && (
-              <div className="space-y-2 text-sm mb-3">
-                {Object.entries(data).slice(0, 4).map(([key, value]) => {
-                  if (value === null || value === undefined || value === 'Unknown') return null;
-                  
-                  return (
-                    <div key={key} className="flex justify-between items-start">
-                      <span className="text-slate-400 capitalize text-xs">{key.replace(/_/g, ' ')}:</span>
-                      <span className="font-medium text-white text-xs max-w-[180px] text-right break-all">
-                        {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                
+                {data.pulses && data.pulses.length > 0 && (
+                  <div className="bg-slate-800 rounded-lg p-3">
+                    <h5 className="text-xs font-semibold text-blue-400 mb-2">Pulse Details</h5>
+                    <div className="space-y-2 max-h-40 overflow-y-auto">
+                      {data.pulses.map((pulse, idx) => (
+                        <div key={idx} className="text-xs border-b border-slate-700 pb-2 last:border-0">
+                          <div className="text-white font-medium mb-1">{pulse.name}</div>
+                          {pulse.tags && pulse.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-1">
+                              {pulse.tags.map((tag, i) => (
+                                <span key={i} className="px-1.5 py-0.5 bg-blue-900/30 text-blue-300 rounded text-xs">
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                <div className="space-y-1 text-xs">
+                  {data.country && data.country !== 'Unknown' && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Country:</span>
+                      <span className="text-white font-medium">{data.country}</span>
+                    </div>
+                  )}
+                  {data.city && data.city !== 'Unknown' && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">City:</span>
+                      <span className="text-white font-medium">{data.city}</span>
+                    </div>
+                  )}
+                  {data.organization && data.organization !== 'Unknown' && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Organization:</span>
+                      <span className="text-white font-medium text-right max-w-[200px] truncate">{data.organization}</span>
+                    </div>
+                  )}
+                  {data.asn && data.asn !== 'Unknown' && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">ASN:</span>
+                      <span className="text-white font-medium">{data.asn}</span>
+                    </div>
+                  )}
+                  {data.reputation !== undefined && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Reputation:</span>
+                      <span className={`font-medium ${data.reputation > 0 ? 'text-green-400' : data.reputation < 0 ? 'text-red-400' : 'text-slate-400'}`}>
+                        {data.reputation}
                       </span>
                     </div>
-                  );
-                })}
+                  )}
+                </div>
               </div>
             )}
 
             {/* Other Sources - Compact View */}
-            {!['Virustotal', 'Abuseipdb', 'Greynoise', 'Url_analysis', 'Mxtoolbox', 'Ipvoid', 'Urlscan', 'Otx', 'Whois'].includes(name) && (
+            {!['Virustotal', 'Abuseipdb', 'Greynoise', 'Url_analysis', 'Mxtoolbox', 'Ipvoid', 'Urlscan', 'Otx'].includes(name) && (
               <div className="space-y-2 text-sm mb-3">
                 {Object.entries(data).map(([key, value]) => {
                   if (value === null || value === undefined) return null;
