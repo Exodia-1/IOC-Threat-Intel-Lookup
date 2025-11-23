@@ -1,8 +1,13 @@
 import hashlib
 import os
-import magic
 from datetime import datetime
 from typing import Dict
+
+try:
+    import magic
+    MAGIC_AVAILABLE = True
+except ImportError:
+    MAGIC_AVAILABLE = False
 
 class FileAnalyzer:
     """Analyze files for metadata and threat intelligence"""
