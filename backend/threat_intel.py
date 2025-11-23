@@ -4,9 +4,6 @@ import time
 from typing import Dict, Optional
 import logging
 import whois
-from playwright.async_api import async_playwright
-import asyncio
-import base64
 
 logger = logging.getLogger(__name__)
 
