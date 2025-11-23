@@ -67,6 +67,18 @@ const EmailAnalysisPage = () => {
     }
   };
 
+  const handleClearDomain = () => {
+    setEmailInput('');
+    setResults(null);
+    setError(null);
+  };
+
+  const handleClearHeaders = () => {
+    setHeadersInput('');
+    setResults(null);
+    setError(null);
+  };
+
   const SecurityScoreGauge = ({ score }) => {
     const percentage = score;
     let color = 'text-red-400';
