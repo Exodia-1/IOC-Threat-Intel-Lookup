@@ -80,7 +80,6 @@ function App() {
           <Route path="/" element={<LookupPage />} />
           <Route path="/email" element={<EmailAnalysisPage />} />
           <Route path="/file" element={<FileAnalysisPage />} />
-          <Route path="/history" element={<HistoryPage />} />
         </Routes>
       </BrowserRouter>
     </div>
