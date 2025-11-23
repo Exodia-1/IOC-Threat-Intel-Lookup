@@ -676,16 +676,30 @@ class WHOISService(ThreatIntelService):
             
             creation_date = get_first(w.creation_date)
             expiration_date = get_first(w.expiration_date)
+            updated_date = get_first(w.updated_date)
+            
+            # Get name servers
+            name_servers = w.name_servers if w.name_servers else []
+            if isinstance(name_servers, str):
+                name_servers = [name_servers]
             
             return {
                 'success': True,
                 'data': {
-                    'domain_name': get_first(w.domain_name),
-                    'registrar': w.registrar,
+                    'domain_name': get_first(w.domain_name) or domain,
+                    'registrar': w.registrar or 'Unknown',
                     'creation_date': str(creation_date) if creation_date else 'Unknown',
                     'expiration_date': str(expiration_date) if expiration_date else 'Unknown',
+                    'updated_date': str(updated_date) if updated_date else 'Unknown',
                     'status': str(w.status) if w.status else 'Unknown',
-                    'name_servers': ', '.join(w.name_servers) if w.name_servers else 'Unknown'
+                    'name_servers': name_servers[:5] if name_servers else [],
+                    'registrant_name': getattr(w, 'name', 'Unknown'),
+                    'registrant_organization': getattr(w, 'org', 'Unknown'),
+                    'registrant_email': getattr(w, 'emails', ['Unknown'])[0] if hasattr(w, 'emails') and w.emails else 'Unknown',
+                    'registrant_country': getattr(w, 'country', 'Unknown'),
+                    'admin_email': getattr(w, 'admin_email', 'Unknown'),
+                    'tech_email': getattr(w, 'tech_email', 'Unknown'),
+                    'dnssec': getattr(w, 'dnssec', 'Unknown')
                 }
             }
         
