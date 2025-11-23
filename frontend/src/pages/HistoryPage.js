@@ -134,34 +134,85 @@ const HistoryPage = () => {
           <p className="text-slate-500">Start looking up IOCs to see your investigation history here</p>
         </div>
       ) : (
-        <div className="space-y-3">
-          {history.map((item, index) => (
-            <div
-              key={item.id || index}
-              data-testid={`history-item-${index}`}
-              className="bg-slate-900 border border-slate-800 rounded-lg p-4 hover:border-cyan-600 transition-colors cursor-pointer"
-              onClick={() => viewDetails(item)}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4 flex-1 min-w-0">
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getTypeColor(item.ioc_type)}`}>
-                    {item.ioc_type.toUpperCase()}
-                  </span>
-                  <code className="text-slate-200 font-mono text-sm truncate flex-1">{item.ioc_value}</code>
-                </div>
-                <div className="flex items-center space-x-4 ml-4">
-                  <span className="text-sm text-slate-500">{formatTimestamp(item.timestamp)}</span>
-                  <button
-                    className="text-cyan-400 hover:text-cyan-300 text-sm font-medium"
-                    data-testid={`view-details-${index}`}
-                  >
-                    View Details →
-                  </button>
+        <>
+          <div className="space-y-3 mb-6">
+            {history.map((item, index) => (
+              <div
+                key={item.id || index}
+                data-testid={`history-item-${index}`}
+                className="bg-slate-900 border border-slate-800 rounded-lg p-4 hover:border-cyan-600 transition-colors cursor-pointer"
+                onClick={() => viewDetails(item)}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4 flex-1 min-w-0">
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getTypeColor(item.ioc_type)}`}>
+                      {item.ioc_type.toUpperCase()}
+                    </span>
+                    <code className="text-slate-200 font-mono text-sm truncate flex-1">{item.ioc_value}</code>
+                  </div>
+                  <div className="flex items-center space-x-4 ml-4">
+                    <span className="text-sm text-slate-500">{formatTimestamp(item.timestamp)}</span>
+                    <button
+                      className="text-cyan-400 hover:text-cyan-300 text-sm font-medium"
+                      data-testid={`view-details-${index}`}
+                    >
+                      View Details →
+                    </button>
+                  </div>
                 </div>
               </div>
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center space-x-2">
+              <button
+                onClick={() => fetchHistory(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:bg-slate-900 disabled:text-slate-600 text-white rounded-lg transition-colors"
+              >
+                ← Previous
+              </button>
+              
+              <div className="flex items-center space-x-2">
+                {[...Array(totalPages)].map((_, i) => {
+                  const page = i + 1;
+                  if (
+                    page === 1 ||
+                    page === totalPages ||
+                    (page >= currentPage - 1 && page <= currentPage + 1)
+                  ) {
+                    return (
+                      <button
+                        key={page}
+                        onClick={() => fetchHistory(page)}
+                        className={`px-3 py-1 rounded-lg transition-colors ${
+                          currentPage === page
+                            ? 'bg-cyan-600 text-white'
+                            : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    );
+                  } else if (page === currentPage - 2 || page === currentPage + 2) {
+                    return <span key={page} className="text-slate-500">...</span>;
+                  }
+                  return null;
+                })}
+              </div>
+
+              <button
+                onClick={() => fetchHistory(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:bg-slate-900 disabled:text-slate-600 text-white rounded-lg transition-colors"
+              >
+                Next →
+              </button>
             </div>
-          ))}
-        </div>
+          )}
+        </>
       )}
     </div>
   );
