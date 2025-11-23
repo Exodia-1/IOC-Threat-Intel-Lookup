@@ -92,13 +92,21 @@ class VirusTotalService(ThreatIntelService):
                 attributes = data.get('data', {}).get('attributes', {})
                 stats = attributes.get('last_analysis_stats', {})
                 
+                malicious = stats.get('malicious', 0)
+                suspicious = stats.get('suspicious', 0)
+                harmless = stats.get('harmless', 0)
+                undetected = stats.get('undetected', 0)
+                total_scans = malicious + suspicious + harmless + undetected
+                
                 return {
                     'success': True,
                     'data': {
-                        'malicious': stats.get('malicious', 0),
-                        'suspicious': stats.get('suspicious', 0),
-                        'harmless': stats.get('harmless', 0),
-                        'undetected': stats.get('undetected', 0),
+                        'malicious': malicious,
+                        'suspicious': suspicious,
+                        'harmless': harmless,
+                        'undetected': undetected,
+                        'total_scans': total_scans,
+                        'detection_ratio': f"{malicious + suspicious}/{total_scans}",
                         'reputation': attributes.get('reputation', 0),
                         'categories': attributes.get('categories', {})
                     }
