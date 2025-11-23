@@ -226,168 +226,42 @@ const ResultsDisplay = ({ results }) => {
 
         {success && data ? (
           <>
-            {/* VirusTotal - Clean Gauge Display */}
+            {/* VirusTotal - Clean Gauge Display (matching AbuseIPDB style) */}
             {name === 'Virustotal' && (
               <div className="flex flex-col items-center mb-4">
-                {/* File Information for Hashes */}
-                {iocType && ['md5', 'sha1', 'sha256'].includes(iocType) && (
-                  <div className="mb-4 p-3 bg-slate-900 rounded-lg border border-slate-700">
-                    <h5 className="text-xs font-semibold text-cyan-400 mb-2">File Information</h5>
-                    <div className="space-y-2 text-xs">
-                      {data.file_name && data.file_name !== 'Unknown' && (
-                        <div>
-                          <span className="text-slate-400">Name:</span>
-                          <div className="text-slate-200 font-medium mt-1 break-all">{data.file_name}</div>
-                        </div>
-                      )}
-                      {data.size_readable && (
-                        <div className="flex justify-between">
-                          <span className="text-slate-400">Size:</span>
-                          <span className="text-slate-200 font-bold">{data.size_readable}</span>
-                        </div>
-                      )}
-                      {data.file_type && data.file_type !== 'Unknown' && (
-                        <div className="flex justify-between">
-                          <span className="text-slate-400">Type:</span>
-                          <span className="text-slate-200 font-medium">{data.file_type}</span>
-                        </div>
-                      )}
-                      {data.file_extension && data.file_extension !== 'Unknown' && (
-                        <div className="flex justify-between">
-                          <span className="text-slate-400">Extension:</span>
-                          <span className="text-slate-200 font-medium">.{data.file_extension}</span>
-                        </div>
-                      )}
-                      {data.times_submitted > 0 && (
-                        <div className="flex justify-between">
-                          <span className="text-slate-400">Submissions:</span>
-                          <span className="text-slate-200 font-medium">{data.times_submitted}</span>
-                        </div>
-                      )}
-                    </div>
-                    
-                    {/* File Hashes */}
-                    {data.sha256 && data.sha256 !== 'N/A' && (
-                      <div className="mt-3 pt-3 border-t border-slate-700">
-                        <h5 className="text-xs font-semibold text-cyan-400 mb-2">Hashes</h5>
-                        <div className="space-y-1">
-                          <div>
-                            <span className="text-slate-500 text-xs">MD5:</span>
-                            <code className="block text-xs text-slate-300 font-mono break-all bg-slate-950 p-1 rounded mt-1">
-                              {data.md5}
-                            </code>
-                          </div>
-                          <div>
-                            <span className="text-slate-500 text-xs">SHA-1:</span>
-                            <code className="block text-xs text-slate-300 font-mono break-all bg-slate-950 p-1 rounded mt-1">
-                              {data.sha1}
-                            </code>
-                          </div>
-                          <div>
-                            <span className="text-slate-500 text-xs">SHA-256:</span>
-                            <code className="block text-xs text-slate-300 font-mono break-all bg-slate-950 p-1 rounded mt-1">
-                              {data.sha256}
-                            </code>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    
-                    {/* Tags */}
-                    {data.tags && data.tags.length > 0 && (
-                      <div className="mt-3 pt-3 border-t border-slate-700">
-                        <h5 className="text-xs font-semibold text-cyan-400 mb-2">Tags</h5>
-                        <div className="flex flex-wrap gap-1">
-                          {data.tags.map((tag, idx) => (
-                            <span key={idx} className="px-2 py-0.5 bg-slate-800 text-slate-300 rounded text-xs">
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                <ScoreGauge 
+                  score={data.malicious + data.suspicious}
+                  maxScore={data.total_scans || 1}
+                  label="Vendors Flagged"
+                  thresholds={{ high: Math.floor((data.total_scans || 1) * 0.3), medium: 1 }}
+                />
+                <div className="w-full mt-4 space-y-2 text-xs">
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Detections:</span>
+                    <span className="text-red-400 font-semibold">{data.malicious || 0} malicious, {data.suspicious || 0} suspicious</span>
                   </div>
-                )}
-                
-                {/* Detection Gauge */}
-                <div className="relative w-32 h-32 mb-4">
-                  {/* Circular Progress */}
-                  <svg className="w-32 h-32 transform -rotate-90">
-                    <circle
-                      cx="64"
-                      cy="64"
-                      r="52"
-                      stroke="currentColor"
-                      strokeWidth="8"
-                      fill="none"
-                      className="text-slate-800"
-                    />
-                    <circle
-                      cx="64"
-                      cy="64"
-                      r="52"
-                      stroke="currentColor"
-                      strokeWidth="8"
-                      fill="none"
-                      strokeDasharray={`${2 * Math.PI * 52}`}
-                      strokeDashoffset={`${2 * Math.PI * 52 * (1 - ((data.malicious + data.suspicious) / (data.total_scans || 1)))}`}
-                      className={`${
-                        (data.malicious + data.suspicious) > (data.total_scans * 0.3) ? 'text-red-500' :
-                        (data.malicious + data.suspicious) > 0 ? 'text-yellow-500' :
-                        'text-green-500'
-                      } transition-all duration-500`}
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  {/* Center Text */}
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <div className={`text-3xl font-bold ${
-                      (data.malicious + data.suspicious) > (data.total_scans * 0.3) ? 'text-red-400' :
-                      (data.malicious + data.suspicious) > 0 ? 'text-yellow-400' :
-                      'text-green-400'
-                    }`}>
-                      {data.malicious + data.suspicious}
-                    </div>
-                    <div className="text-xs text-slate-400">/ {data.total_scans || 0}</div>
-                  </div>
-                </div>
-
-                {/* Detection Ratio Label */}
-                <div className="text-center mb-4">
-                  <div className="text-xs text-slate-400">Vendors Flagged</div>
-                  <div className={`text-xl font-bold ${
-                    (data.malicious + data.suspicious) > (data.total_scans * 0.3) ? 'text-red-400' :
-                    (data.malicious + data.suspicious) > 0 ? 'text-yellow-400' :
-                    'text-green-400'
-                  }`}>
-                    {data.detection_ratio}
-                  </div>
-                </div>
-
-                {/* Breakdown Stats */}
-                <div className="w-full space-y-2 text-xs">
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-400">Malicious:</span>
-                    <span className="text-red-400 font-semibold">{data.malicious || 0}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-400">Suspicious:</span>
-                    <span className="text-yellow-400 font-semibold">{data.suspicious || 0}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-400">Harmless:</span>
-                    <span className="text-green-400 font-semibold">{data.harmless || 0}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-400">Undetected:</span>
-                    <span className="text-slate-500 font-semibold">{data.undetected || 0}</span>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Total Scans:</span>
+                    <span className="text-white font-semibold">{data.total_scans || 0}</span>
                   </div>
                   {data.reputation !== undefined && (
-                    <div className="flex justify-between items-center pt-2 border-t border-slate-800">
+                    <div className="flex justify-between">
                       <span className="text-slate-400">Reputation:</span>
                       <span className={`font-semibold ${data.reputation > 0 ? 'text-green-400' : data.reputation < 0 ? 'text-red-400' : 'text-slate-400'}`}>
                         {data.reputation || 0}
                       </span>
+                    </div>
+                  )}
+                  {data.country && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Country:</span>
+                      <span className="text-white font-semibold">{data.country}</span>
+                    </div>
+                  )}
+                  {data.as_owner && data.as_owner !== 'Unknown' && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">AS Owner:</span>
+                      <span className="text-white font-semibold text-right max-w-[180px] truncate">{data.as_owner}</span>
                     </div>
                   )}
                 </div>
