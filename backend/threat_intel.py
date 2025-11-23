@@ -586,7 +586,7 @@ class ThreatIntelAggregator:
         self.whois_service = WHOISService()
         self.screenshot = ScreenshotService()
     
-    def lookup(self, ioc_value: str, ioc_type: str) -> Dict:
+    async def lookup(self, ioc_value: str, ioc_type: str) -> Dict:
         """Lookup IOC across all applicable sources"""
         results = {
             'ioc': ioc_value,
@@ -611,7 +611,7 @@ class ThreatIntelAggregator:
             results['sources']['virustotal'] = self.vt.lookup_url(ioc_value)
             results['sources']['urlscan'] = self.urlscan.lookup_url(ioc_value)
             results['sources']['otx'] = self.otx.lookup_url(ioc_value)
-            results['sources']['screenshot'] = self.screenshot.capture_screenshot_sync(ioc_value)
+            results['sources']['screenshot'] = await self.screenshot.capture_screenshot(ioc_value)
         
         elif ioc_type in ['md5', 'sha1', 'sha256']:
             results['sources']['virustotal'] = self.vt.lookup_hash(ioc_value)
