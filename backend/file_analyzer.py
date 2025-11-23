@@ -92,9 +92,14 @@ class FileAnalyzer:
     def _detect_file_type(content: bytes) -> Dict:
         """Detect file type using magic bytes"""
         try:
-            # Try to use python-magic
-            file_type = magic.from_buffer(content, mime=True)
-            file_description = magic.from_buffer(content)
+            if MAGIC_AVAILABLE:
+                # Try to use python-magic
+                file_type = magic.from_buffer(content, mime=True)
+                file_description = magic.from_buffer(content)
+            else:
+                # Basic detection without magic
+                file_type = 'application/octet-stream'
+                file_description = 'File type detection unavailable'
             
             # Detect potential executable
             is_executable = FileAnalyzer._is_executable(content)
