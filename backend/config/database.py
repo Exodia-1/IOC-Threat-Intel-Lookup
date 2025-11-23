@@ -1,5 +1,6 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 from .settings import settings
+import ssl
 
 class Database:
     client: AsyncIOMotorClient = None
@@ -7,7 +8,20 @@ class Database:
     @classmethod
     def get_client(cls) -> AsyncIOMotorClient:
         if cls.client is None:
-            cls.client = AsyncIOMotorClient(settings.MONGO_URL)
+            # Configure SSL/TLS for MongoDB Atlas
+            try:
+                cls.client = AsyncIOMotorClient(
+                    settings.MONGO_URL,
+                    tls=True,
+                    tlsAllowInvalidCertificates=False,
+                    serverSelectionTimeoutMS=5000,
+                    connectTimeoutMS=10000,
+                    retryWrites=True,
+                    w='majority'
+                )
+            except Exception as e:
+                print(f"Error connecting to MongoDB: {e}")
+                raise
         return cls.client
     
     @classmethod
