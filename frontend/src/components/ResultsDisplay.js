@@ -815,6 +815,16 @@ const ResultsDisplay = ({ results }) => {
                     </span>
                   </div>
                 )}
+                {iocResult.sources?.ipvoid?.data?.detections !== undefined && (
+                  <div>
+                    <span className="text-slate-400">IPVoid:</span>
+                    <span className={`ml-2 font-medium ${
+                      iocResult.sources.ipvoid.data.detections > 0 ? 'text-red-400' : 'text-green-400'
+                    }`}>
+                      {iocResult.sources.ipvoid.data.detection_ratio || '0/0'}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
