@@ -31,6 +31,12 @@ const ResultsDisplay = ({ results }) => {
       return { level: 'high', text: 'High Risk', color: 'text-red-400' };
     }
     
+    // Check GreyNoise
+    const greynoise = sources.greynoise?.data;
+    if (greynoise && greynoise.classification === 'malicious') {
+      return { level: 'high', text: 'High Risk', color: 'text-red-400' };
+    }
+    
     if (vt && (vt.malicious > 0 || vt.suspicious > 0)) {
       return { level: 'medium', text: 'Medium Risk', color: 'text-yellow-400' };
     }
