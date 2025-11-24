@@ -1,0 +1,20 @@
+# Docker ignore file
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.env
+venv/
+ENV/
+.venv
+*.md
+.git/
+.gitignore
+Dockerfile
+.dockerignore
+*.log
+.pytest_cache/
+.coverage
+htmlcov/
+.DS_Store
