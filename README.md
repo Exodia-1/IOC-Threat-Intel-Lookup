@@ -2,11 +2,11 @@
 
 A comprehensive Cyber Threat Intelligence (CTI) dashboard for analyzing Indicators of Compromise (IOCs) across multiple threat intelligence sources.
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.11-blue.svg)
 ![React](https://img.shields.io/badge/react-18.x-blue.svg)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115.12-green.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Vercel](https://img.shields.io/badge/deployed%20on-Vercel-black.svg)
 
 ## 🔥 Features
 
