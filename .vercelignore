@@ -1,4 +1,4 @@
-# Vercel ignore file
+# Vercel ignore file - Exclude unnecessary files to reduce size
 node_modules
 .git
 .env
@@ -8,5 +8,20 @@ __pycache__
 .pytest_cache
 .DS_Store
 *.log
+*.md
 backend/.env
 test_result.md
+USAGE_GUIDE.md
+DEPLOYMENT.md
+
+# Test files
+backend/tests/
+frontend/src/**/*.test.js
+frontend/src/**/*.test.tsx
+
+# Documentation
+*.md
+!README.md
+
+# Large unnecessary files
+backend/requirements-full.txt
