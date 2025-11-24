@@ -1,7 +1,10 @@
-# Ultra-minimal requirements for Vercel (< 250MB)
+# Full requirements for Google Cloud Run (no size limits)
 fastapi==0.110.1
 uvicorn[standard]==0.25.0
 python-dotenv==1.2.1
+pydantic==2.12.4
 requests==2.32.5
 dnspython==2.8.0
 python-whois==0.9.6
+email-validator==2.3.0
+python-magic==0.4.27
