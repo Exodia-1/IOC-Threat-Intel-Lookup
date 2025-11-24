@@ -18,6 +18,15 @@ load_dotenv(ROOT_DIR / '.env')
 # Create the main app without a prefix
 app = FastAPI()
 
+# Health check endpoint for Railway (at root level, not under /api)
+@app.get("/")
+async def health_check():
+    return {"status": "healthy", "message": "CTI IOC Lookup API"}
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
+
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
