@@ -64,8 +64,18 @@ async def lookup_iocs(request: IOCLookupRequest):
         # Lookup each IOC
         results = []
         for ioc in iocs:
-            lookup_result = await aggregator.lookup(ioc['value'], ioc['type'])
-            results.append(lookup_result)
+            try:
+                lookup_result = await aggregator.lookup(ioc['value'], ioc['type'])
+                results.append(lookup_result)
+            except Exception as ioc_error:
+                logger.error(f"Error looking up {ioc['value']}: {str(ioc_error)}")
+                # Continue with other IOCs even if one fails
+                results.append({
+                    'ioc': ioc['value'],
+                    'type': ioc['type'],
+                    'error': str(ioc_error),
+                    'sources': {}
+                })
         
         return {
             'success': True,
@@ -74,7 +84,7 @@ async def lookup_iocs(request: IOCLookupRequest):
         }
     
     except Exception as e:
-        logger.error(f"IOC lookup error: {str(e)}")
+        logger.error(f"IOC lookup error: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 # Email Analysis Endpoints
