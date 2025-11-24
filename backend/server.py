@@ -56,19 +56,6 @@ async def lookup_iocs(request: IOCLookupRequest):
         results = []
         for ioc in iocs:
             lookup_result = await aggregator.lookup(ioc['value'], ioc['type'])
-            
-            # Save to database
-            result_obj = IOCLookupResult(
-                ioc_value=ioc['value'],
-                ioc_type=ioc['type'],
-                results=lookup_result
-            )
-            
-            doc = result_obj.model_dump()
-            doc['timestamp'] = doc['timestamp'].isoformat()
-            
-            await db.ioc_lookups.insert_one(doc)
-            
             results.append(lookup_result)
         
         return {
