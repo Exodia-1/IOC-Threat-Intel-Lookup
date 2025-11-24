@@ -28,6 +28,30 @@ A comprehensive Cyber Threat Intelligence (CTI) dashboard for analyzing Indicato
 
 ### Advanced Analysis
 - 📬 **Email Analysis**: Domain security checks (SPF, DMARC, DKIM, MX) and header parsing
+
+## 🚀 Quick Deploy to Vercel
+
+This app can be deployed to Vercel in 5 minutes!
+
+```bash
+# 1. Push to GitHub
+git init && git add . && git commit -m "Initial commit"
+git remote add origin YOUR_REPO_URL
+git push -u origin main
+
+# 2. Import to Vercel
+# Go to vercel.com/new and import your repo
+
+# 3. Configure & Deploy
+# See QUICK_START.md for detailed instructions
+```
+
+**Your app will be live at:** `https://your-app.vercel.app`
+
+- ✅ Frontend + Backend on same domain (no CORS issues)
+- ✅ Auto-deploys from GitHub
+- ✅ Free SSL & Global CDN
+- ✅ Serverless & Scalable
 - 📄 **File Analysis**: Upload files to extract hashes and metadata
 - 🔗 **URL Analysis**: Detect redirects and extract all links from web pages
 - 🔎 **Enhanced Hash Details**: Detailed file information from VirusTotal (type, size, names, tags)
