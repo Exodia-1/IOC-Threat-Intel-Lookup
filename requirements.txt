@@ -1,22 +1,7 @@
-# Minimal requirements for Vercel deployment
-# Only essential packages to stay under 250MB limit
-
-# Core FastAPI
+# Ultra-minimal requirements for Vercel (< 250MB)
 fastapi==0.110.1
-uvicorn==0.25.0
-pydantic==2.12.4
+uvicorn[standard]==0.25.0
 python-dotenv==1.2.1
-
-# HTTP Requests
 requests==2.32.5
-
-# DNS/Email/WHOIS Analysis
 dnspython==2.8.0
 python-whois==0.9.6
-email-validator==2.3.0
-
-# File Analysis
-python-magic==0.4.27
-
-# CORS
-starlette==0.37.2
